@@ -6,6 +6,12 @@ This project is the first stage of a Shopping App built with React. The applicat
 
 ---
 
+## Live Demo
+
+🔗 https://rhainunity.github.io/TrpTn-Final-Project-Frontend/
+
+---
+
 ## Features
 
 - Add shopping items
@@ -47,8 +53,8 @@ This project is the first stage of a Shopping App built with React. The applicat
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/shopping-app.git
-cd shopping-app
+git clone https://github.com/RhainUnity/TrpTn-Final-Project-Frontend.git
+cd TrpTn-Final-Project-Frontend
 ```
 
 Install dependencies:
@@ -107,7 +113,7 @@ Planned for Future Stages:
 ## Author
 
 Your Name  
-GitHub: https://github.com/your-username
+GitHub: https://github.com/RhainUnity
 
 ---
 
