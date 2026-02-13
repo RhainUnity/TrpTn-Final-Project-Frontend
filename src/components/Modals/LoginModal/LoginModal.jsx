@@ -6,17 +6,29 @@ import "./LoginModal.css";
 function LoginModal({ isOpen, onClose, onFakeLogin, onOpenRegister }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+
   return (
     <ModalWithForm title="Sign In" isOpen={isOpen} onClose={onClose}>
       <label className="auth__label">
         Email
-        <input className="auth__input" type="email" placeholder="Email" />
+        <input
+          className="auth__input"
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
       </label>
 
       <label className="auth__label">
         Password
-        <input className="auth__input" type="password" placeholder="Password" />
+        <input
+          className="auth__input"
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </label>
 
       {/* Stage 1: no real submit, just fake-login */}
@@ -24,9 +36,10 @@ function LoginModal({ isOpen, onClose, onFakeLogin, onOpenRegister }) {
         className="auth__submit"
         type="button"
         onClick={() => {
-          onFakeLogin();
+          onFakeLogin(email, password);
           onClose();
         }}
+        disabled={!email.trim || !password.trim()}
       >
         Sign In
       </button>
