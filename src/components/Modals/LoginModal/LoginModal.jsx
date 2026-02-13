@@ -1,8 +1,12 @@
 // src/components/Modals/LoginModal/LoginModal.jsx
+import { useState } from "react";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import "./LoginModal.css";
 
 function LoginModal({ isOpen, onClose, onFakeLogin, onOpenRegister }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  
   return (
     <ModalWithForm title="Sign In" isOpen={isOpen} onClose={onClose}>
       <label className="auth__label">
