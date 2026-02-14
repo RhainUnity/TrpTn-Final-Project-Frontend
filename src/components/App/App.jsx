@@ -15,12 +15,19 @@ import LoginModal from "../Modals/LoginModal/LoginModal";
 import RegisterModal from "../Modals/RegisterModal/RegisterModal";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [isLoginOpen, setIsLoginOpen] = useState(false);
+  // const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  // const [avatarUrl, setAvatarUrl] = useState(null);
+
+  const [currentUser, setCurrentUser] = useState(() =>
+    readJSON("currentUser", null),
+  );
+
+  const isLoggedIn = Boolean(currentUser);
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-
-  const [avatarUrl, setAvatarUrl] = useState(null);
 
   // temporary hardcoded items
   const [items, setItems] = useState([
@@ -34,6 +41,20 @@ function App() {
       hidden: false,
     },
   ]);
+
+  // //////////// temporoary persistence of current user ////////////
+  useEffect(() => {
+    if (currentUser) {
+      writeJSON("currentUser", currentUser);
+    } else {
+      remove("currentUser");
+    }
+  }, [currentUser]);
+
+  const handleSignOut = () => {
+    setCurrentUser(null);
+  };
+  // //////////////////////////////////
 
   const closeAllModals = () => {
     setIsLoginOpen(false);
@@ -54,19 +75,25 @@ function App() {
     <div className="page">
       <Header
         isLoggedIn={isLoggedIn}
-        avatarUrl={avatarUrl}
+        avatarUrl={currentUser?.avatarUrl || null}
         onOpenLogin={openLogin}
-        onSignOut={() => {
-          setIsLoggedIn(false);
-          setAvatarUrl(null);
-        }}
+        onSignOut={handleSignOut}
       />
 
       <main className="page__content">
         <Routes>
           <Route path="/about" element={<About />} />
           {/* Stage 1: allow navigation even if "logged out" */}
-          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/profile"
+            element={
+              <Profile
+                isLoggedIn={isLoggedIn}
+                user={currentUser}
+                itemCount={items.length}
+              />
+            }
+          />
 
           <Route
             path="/"
@@ -86,7 +113,14 @@ function App() {
       <LoginModal
         isOpen={isLoginOpen}
         onClose={closeAllModals}
-        onFakeLogin={() => setIsLoggedIn(true)}
+        onFakeLogin={(email) => {
+          const simplified = email.trim().toLowerCase();
+          setCurrentUser({
+            id: simplified,
+            email: simplified,
+            avatarUrl: currentUser?.avatarUrl || null,
+          });
+        }}
         onOpenRegister={openRegister}
       />
 
@@ -95,8 +129,11 @@ function App() {
         onClose={closeAllModals}
         onOpenLogin={openLogin}
         onRegister={({ avatarUrl }) => {
-          setIsLoggedIn(true);
-          setAvatarUrl(avatarUrl || null);
+          const existing = currentUser?.id;
+          const id = existing || `guest-${Date.now()}`;
+          const email = currentUser?.email || "guest@example.com";
+
+          setCurrentUser({ id, email, avatarUrl: avatarUrl || null });
           closeAllModals();
         }}
       />

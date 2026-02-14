@@ -31,7 +31,7 @@ function LoginModal({ isOpen, onClose, onFakeLogin, onOpenRegister }) {
         />
       </label>
 
-      {/* Stage 1: no real submit, just fake-login */}
+      {/* Stage 1: local submitted fake login*/}
       <button
         className="auth__submit"
         type="button"
@@ -39,7 +39,7 @@ function LoginModal({ isOpen, onClose, onFakeLogin, onOpenRegister }) {
           onFakeLogin(email, password);
           onClose();
         }}
-        disabled={!email.trim || !password.trim()}
+        disabled={!email.trim() || !password.trim()}
       >
         Sign In
       </button>
