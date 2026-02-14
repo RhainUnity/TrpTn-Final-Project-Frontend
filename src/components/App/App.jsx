@@ -24,23 +24,42 @@ function App() {
     readJSON("currentUser", null),
   );
 
+  const [userItems, setUserItems] = useState(() => readJSON("userItems", {}));
+
   const isLoggedIn = Boolean(currentUser);
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
-  // temporary hardcoded items
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      item: "Nissin Chow Mein",
-      priority: "Essential",
-      category: "Pantry",
-      price: 2.75,
-      qty: 10,
-      hidden: false,
-    },
-  ]);
+  const userKey = currentUser?.id || "guest";
+  const items = userItems[userKey] || [];
+
+  const setItemsForUser = (updater) => {
+    setUserItems((prev) => {
+      const current = prev[userKey] || [];
+      const nextItems =
+        typeof updater === "function" ? updater(current) : updater;
+
+      return {
+        ...prev,
+        [userKey]: nextItems,
+      };
+    });
+  };
+
+  // ////deprecate this code/////
+  // // temporary hardcoded items
+  // const [items, setItems] = useState([
+  //   {
+  //     id: 1,
+  //     item: "Nissin Chow Mein",
+  //     priority: "Essential",
+  //     category: "Pantry",
+  //     price: 2.75,
+  //     qty: 10,
+  //     hidden: false,
+  //   },
+  // ]);
 
   // //////////// temporoary persistence of current user ////////////
   useEffect(() => {
@@ -50,6 +69,10 @@ function App() {
       remove("currentUser");
     }
   }, [currentUser]);
+
+  useEffect(() => {
+    writeJSON("userItems", userItems);
+  }, [userItems]);
 
   const handleSignOut = () => {
     setCurrentUser(null);
@@ -97,11 +120,11 @@ function App() {
 
           <Route
             path="/"
-            element={<Main items={items} setItems={setItems} />}
+            element={<Main items={items} setItems={setItemsForUser} />}
           />
           <Route
             path="/full-list"
-            element={<FullList items={items} setItems={setItems} />}
+            element={<FullList items={items} setItems={setItemsForUser} />}
           />
 
           <Route path="*" element={<Navigate to="/" replace />} />
