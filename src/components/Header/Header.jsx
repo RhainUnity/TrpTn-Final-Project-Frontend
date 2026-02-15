@@ -2,7 +2,7 @@
 import { Link, NavLink } from "react-router-dom";
 import "./Header.css";
 
-function Header({ isLoggedIn, avatarUrl, onOpenLogin, onSignOut }) {
+function Header({ isLoggedIn, email, avatarUrl, onOpenLogin, onSignOut }) {
   return (
     <header className="header">
       <Link to="/" className="header__logo">
@@ -21,6 +21,7 @@ function Header({ isLoggedIn, avatarUrl, onOpenLogin, onSignOut }) {
             className="header__avatar-link"
             aria-label="Profile"
           >
+            <span className="header__email">{email}</span>
             <span className="header__avatar">
               {avatarUrl ? (
                 <img

@@ -15,10 +15,6 @@ import LoginModal from "../Modals/LoginModal/LoginModal";
 import RegisterModal from "../Modals/RegisterModal/RegisterModal";
 
 function App() {
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const [isLoginOpen, setIsLoginOpen] = useState(false);
-  // const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  // const [avatarUrl, setAvatarUrl] = useState(null);
 
   const [currentUser, setCurrentUser] = useState(() =>
     readJSON("currentUser", null),
@@ -46,20 +42,6 @@ function App() {
       };
     });
   };
-
-  // ////deprecate this code/////
-  // // temporary hardcoded items
-  // const [items, setItems] = useState([
-  //   {
-  //     id: 1,
-  //     item: "Nissin Chow Mein",
-  //     priority: "Essential",
-  //     category: "Pantry",
-  //     price: 2.75,
-  //     qty: 10,
-  //     hidden: false,
-  //   },
-  // ]);
 
   // //////////// temporoary persistence of current user ////////////
   useEffect(() => {
@@ -98,6 +80,7 @@ function App() {
     <div className="page">
       <Header
         isLoggedIn={isLoggedIn}
+        email={currentUser?.email || ""}
         avatarUrl={currentUser?.avatarUrl || null}
         onOpenLogin={openLogin}
         onSignOut={handleSignOut}
@@ -106,7 +89,7 @@ function App() {
       <main className="page__content">
         <Routes>
           <Route path="/about" element={<About />} />
-          {/* Stage 1: allow navigation even if "logged out" */}
+          {/* Stage 1: allow navigation using localstorage for user state */}
           <Route
             path="/profile"
             element={
@@ -114,6 +97,9 @@ function App() {
                 isLoggedIn={isLoggedIn}
                 user={currentUser}
                 itemCount={items.length}
+                onUpdateAvatar={(avatarPatch) =>
+                  setCurrentUser((prev) => (prev ? { ...prev, ...avatarPatch } : prev))
+                }
               />
             }
           />
