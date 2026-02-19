@@ -106,3 +106,26 @@
   font-size: 13px;
   color: #666;
 }
+
+/* ADD MODAL LOOKUP FORM: */
+.addmodal__error {
+  margin: 8px 0;
+  color: #b00020;
+}
+
+.addmodal__resultCard {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+.addmodal__resultTitle {
+  margin: 0 0 6px;
+  font-weight: 600;
+}
+.addmodal__resultMeta {
+  margin: 6px 0 0;
+  font-size: 12px;
+  opacity: 0.8;
+}

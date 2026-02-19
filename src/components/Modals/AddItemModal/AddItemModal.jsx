@@ -1,6 +1,8 @@
 // src/components/Modals/AddItemModal/AddItemModal.jsx
 
 import { useEffect, useState } from "react";
+import { fetchBlsSeries } from "../../../utils/blsApi";
+import { resolveSeriesId } from "../../../utils/blsSeriesMap";
 import "./AddItemModal.css";
 
 function AddItemModal({ isOpen, onClose, onSubmit, store }) {
@@ -16,6 +18,14 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
   const [lookupQuery, setLookupQuery] = useState("");
   const [lookupZip, setLookupZip] = useState("");
 
+  const [lookupStatus, setLookupStatus] = useState("idle"); // idle | loading | error | done
+  const [lookupError, setLookupError] = useState("");
+  const [lookupResult, setLookupResult] = useState(null); // { label, price, meta... }
+
+  // setLookupStatus("idle");
+  // setLookupError("");
+  // setLookupResult(null);
+
   useEffect(() => {
     if (!isOpen) return;
     // reset each time it opens
@@ -28,7 +38,63 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     setLookupQuery("");
     //  setLookupStore("Safeway");
     setLookupZip("");
+
+    setLookupStatus("idle");
+    setLookupError("");
+    setLookupResult(null);
   }, [isOpen]);
+
+  // // /// Handlers for lookup form (API integration later)  ////////////
+  const handleLookupSearch = async () => {
+    const resolved = resolveSeriesId(lookupQuery);
+
+    if (!resolved) {
+      setLookupStatus("error");
+      setLookupError(
+        "No match yet. Try: banana, milk (we’ll add more items soon).",
+      );
+      setLookupResult(null);
+      return;
+    }
+
+    try {
+      setLookupStatus("loading");
+      setLookupError("");
+      setLookupResult(null);
+
+      const latest = await fetchBlsSeries(resolved.seriesId);
+      if (!latest || Number.isNaN(latest.value)) {
+        throw new Error("No data returned for that item.");
+      }
+
+      setLookupResult({
+        matchedKey: resolved.key,
+        seriesId: latest.seriesId || resolved.seriesId,
+        price: latest.value,
+        periodName: latest.periodName,
+        year: latest.year,
+      });
+
+      setLookupStatus("done");
+    } catch (e) {
+      setLookupStatus("error");
+      setLookupError(e?.message || "Lookup failed");
+      setLookupResult(null);
+    }
+  };
+
+  const handleUseLookupPrice = () => {
+    if (!lookupResult) return;
+
+    // optional: set the name based on what matched (or keep user’s typed name)
+    setName((prev) => (prev.trim() ? prev : lookupResult.matchedKey));
+
+    // set price input from lookup
+    setPrice(String(lookupResult.price));
+
+    setIsLookupOpen(false);
+  };
+  // // ////////END Lookup Handlers  //////////////////////////////
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -156,7 +222,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
                 />
               </label>
 
-              <div className="addmodal__lookup-actions">
+              {/* <div className="addmodal__lookup-actions">
                 <button type="button" className="addmodal__lookup-btn" disabled>
                   Search (coming soon)
                 </button>
@@ -169,7 +235,59 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
                 <p className="addmodal__hint">
                   Results will appear here (API later).
                 </p>
+              </div> */}
+
+              {/* LOOkUP FORM with API integration: */}
+              <div className="addmodal__lookup-actions">
+                <button
+                  type="button"
+                  className="addmodal__lookup-btn"
+                  onClick={handleLookupSearch}
+                  disabled={!lookupQuery.trim() || lookupStatus === "loading"}
+                >
+                  {lookupStatus === "loading" ? "Searching..." : "Search"}
+                </button>
+
+                <button
+                  type="button"
+                  className="addmodal__lookup-btn"
+                  onClick={handleUseLookupPrice}
+                  disabled={!lookupResult}
+                >
+                  Use Price
+                </button>
               </div>
+
+              {/* LOOKUP RESULTS: */}
+              <div className="addmodal__lookup-results">
+                {lookupStatus === "error" && (
+                  <p className="addmodal__error">{lookupError}</p>
+                )}
+
+                {lookupStatus === "idle" && (
+                  <p className="addmodal__hint">
+                    Try: <strong>banana</strong> or <strong>milk</strong>. (More
+                    items soon.)
+                  </p>
+                )}
+
+                {lookupResult && (
+                  <div className="addmodal__resultCard">
+                    <p className="addmodal__resultTitle">
+                      Match: <strong>{lookupResult.matchedKey}</strong>
+                    </p>
+                    <p>
+                      Avg price:{" "}
+                      <strong>${lookupResult.price.toFixed(2)}</strong>
+                    </p>
+                    <p className="addmodal__resultMeta">
+                      Source: BLS Average Price ({lookupResult.periodName}{" "}
+                      {lookupResult.year})
+                    </p>
+                  </div>
+                )}
+              </div>
+              {/* END Lookup Form */}
             </div>
           )}
           <button className="addmodal__submit" type="submit">
