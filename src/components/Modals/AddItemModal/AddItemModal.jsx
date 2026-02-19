@@ -22,10 +22,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
   const [lookupError, setLookupError] = useState("");
   const [lookupResult, setLookupResult] = useState(null); // { label, price, meta... }
 
-  // setLookupStatus("idle");
-  // setLookupError("");
-  // setLookupResult(null);
-
+  /* ---USEEFFECTS START--- */
   useEffect(() => {
     if (!isOpen) return;
     // reset each time it opens
@@ -44,7 +41,15 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     setLookupResult(null);
   }, [isOpen]);
 
-  // // /// Handlers for lookup form (API integration later)  ////////////
+  useEffect(() => {
+    if (!isLookupOpen) return;
+    setLookupStatus("idle");
+    setLookupError("");
+    setLookupResult(null);
+  }, [isLookupOpen]);
+  /* ---USEEFFECTS END--- */
+
+  /* ---Handlers for lookup form (API integration later)--- */
   const handleLookupSearch = async () => {
     const resolved = resolveSeriesId(lookupQuery);
 
@@ -83,6 +88,12 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     }
   };
 
+  const formatPriceForInput = (n) => {
+    const num = Number(n);
+    if (Number.isNaN(num)) return "";
+    return num.toFixed(2); // keeps it clean like 1.23
+  };
+
   const handleUseLookupPrice = () => {
     if (!lookupResult) return;
 
@@ -90,11 +101,27 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     setName((prev) => (prev.trim() ? prev : lookupResult.matchedKey));
 
     // set price input from lookup
-    setPrice(String(lookupResult.price));
+    setPrice(formatPriceForInput(lookupResult.price));
+
+    // Auto-pick a category based on matched item
+    const suggestedCategory =
+      lookupResult.matchedKey === "milk" || lookupResult.matchedKey === "eggs"
+        ? "Dairy"
+        : lookupResult.matchedKey === "chicken"
+          ? "Meat"
+          : "Pantry";
+    setCategory((prev) => (prev ? prev : suggestedCategory));
 
     setIsLookupOpen(false);
+
+    // clear status/result so next open feels fresh
+    setLookupStatus("idle");
+    setLookupError("");
+    setLookupResult(null);
+    setLookupQuery("");
+    setLookupZip("");
   };
-  // // ////////END Lookup Handlers  //////////////////////////////
+  /* ---END Lookup Handlers--- */
 
   const handleSubmit = (e) => {
     e.preventDefault();
