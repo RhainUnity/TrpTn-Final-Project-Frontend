@@ -1,15 +1,16 @@
 // src/components/FullList/FullList.jsx
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import "./FullList.css";
 import AddItemModal from "../Modals/AddItemModal/AddItemModal";
+import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal/ConfirmDeleteModal";
 
 const STORE_TABS = ["WinCo", "Safeway", "Albertson’s"];
 
 function FullList({ items = [], setItems }) {
   const [activeStore, setActiveStore] = useState("Safeway");
   const [isAddOpen, setIsAddOpen] = useState(false);
-
+  const [deleteItem, setDeleteItem] = useState(null);
   // Stage 1
   const [editingId, setEditingId] = useState(null);
 
@@ -48,6 +49,24 @@ function FullList({ items = [], setItems }) {
   const handleCancel = () => {
     // Later: revert changes (for now just stop editing)
     setEditingId(null);
+  };
+
+  const requestDelete = (row) => {
+    setDeleteItem(row); // open modal
+  };
+
+  const closeDeleteModal = () => setDeleteItem(null);
+
+  const confirmDelete = () => {
+    if (!deleteItem) return;
+
+    const id = deleteItem.id;
+    setItems((prev) => prev.filter((r) => r.id !== id));
+
+    // if you delete the row you’re editing, exit edit mode
+    if (editingId === id) setEditingId(null);
+
+    setDeleteItem(null);
   };
 
   // Store Tabs
@@ -168,6 +187,32 @@ function FullList({ items = [], setItems }) {
                   )}
                 </div>
 
+                {/* Unit */}
+                <div className="full__cell full__col_unit">
+                  {isEditing ? (
+                    <select
+                      className="full__select"
+                      value={row.unit ?? "each"}
+                      onChange={(e) =>
+                        handleChange(row.id, { unit: e.target.value })
+                      }
+                    >
+                      <option value="each">each</option>
+                      <option value="lb">lb</option>
+                      <option value="oz">oz</option>
+                      <option value="g">g</option>
+                      <option value="kg">kg</option>
+                      <option value="dozen">dozen</option>
+                      <option value="qt">qt</option>
+                      <option value="gallon">gallon</option>
+                      <option value="bag">bag</option>
+                      <option value="box">box</option>
+                    </select>
+                  ) : (
+                    <span>{row.unit || "each"}</span>
+                  )}
+                </div>
+
                 {/* Actions */}
                 <div className="full__cell full__col_action">
                   <label className="full__hide">
@@ -191,6 +236,15 @@ function FullList({ items = [], setItems }) {
                       >
                         Save
                       </button>
+
+                      <button
+                        className="full__btn full__btn_danger"
+                        type="button"
+                        onClick={() => requestDelete(row)}
+                      >
+                        Delete
+                      </button>
+
                       <button
                         className="full__btn"
                         type="button"
@@ -216,11 +270,19 @@ function FullList({ items = [], setItems }) {
 
         <div className="full__spacer" />
       </div>
+
       <AddItemModal
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
         onSubmit={handleAddItem}
         store={activeStore}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={!!deleteItem}
+        itemName={deleteItem?.item}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
       />
     </section>
   );

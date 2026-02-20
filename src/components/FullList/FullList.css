@@ -168,3 +168,8 @@
 .full__spacer {
   height: 180px;
 }
+
+.full__btn_danger {
+  border-color: #c33;
+  color: #c33;
+}
