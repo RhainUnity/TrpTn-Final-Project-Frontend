@@ -66,12 +66,16 @@ function Main({ items = [], setItems }) {
 
   const mainItem = filteredItems[0];
 
+  const getUnitLabel = (unit) => {
+    if (typeof unit === "string") return unit.trim() || "each";
+    return "each";
+  };
+
   return (
     <section className="main">
       <div className="main__panel">
         <div className="main__top">
           <div className="main__filters">
-
             {/* Filter Category */}
             <label className="main__field">
               <span className="main__label">Filter category:</span>
@@ -122,6 +126,7 @@ function Main({ items = [], setItems }) {
               <div key={row.id} className="main__row">
                 <div className="main__row-left">
                   <span className="main__item-name">{row.item}</span>
+                  <span className="main__unit">{getUnitLabel(row.unit)}</span>
                 </div>
 
                 <div className="main__row-right">

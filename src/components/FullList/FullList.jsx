@@ -19,7 +19,7 @@ function FullList({ items = [], setItems }) {
   //   [items, editingId],
   // );
 
-  const handleAddItem = ({ item, price, category, priority }) => {
+  const handleAddItem = ({ item, price, unit, category, priority }) => {
     setItems((prev) => [
       ...prev,
       {
@@ -28,6 +28,7 @@ function FullList({ items = [], setItems }) {
         category,
         priority,
         price,
+        unit,
         qty: 0,
         hidden: false,
       },
@@ -49,7 +50,7 @@ function FullList({ items = [], setItems }) {
     setEditingId(null);
   };
 
-// Store Tabs
+  // Store Tabs
   return (
     <section className="full">
       <div className="full__tabs-wrap">
@@ -85,6 +86,7 @@ function FullList({ items = [], setItems }) {
           <div className="full__col full__col_category">Category</div>
           <div className="full__col full__col_priority">Priority</div>
           <div className="full__col full__col_price">Price</div>
+          <div className="full__col full__col_unit">Unit</div> {/* BOOKMARK */}
         </div>
 
         {/* Items Info */}
@@ -146,7 +148,6 @@ function FullList({ items = [], setItems }) {
                   )}
                 </div>
 
-                
                 {/* Price */}
                 <div className="full__cell full__col_price">
                   {isEditing ? (
@@ -160,7 +161,10 @@ function FullList({ items = [], setItems }) {
                       }
                     />
                   ) : (
-                    <span>${row.price.toFixed(2)}</span>
+                    <span>
+                      ${row.price.toFixed(2)}
+                      {row.unit ? ` / ${row.unit}` : ""}
+                    </span>
                   )}
                 </div>
 

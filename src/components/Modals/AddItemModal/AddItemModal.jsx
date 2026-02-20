@@ -10,6 +10,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
   const [priority, setPriority] = useState("Essential");
+  const [unit, setUnit] = useState("each");
 
   // toggle button for lookup form
   const [isLookupOpen, setIsLookupOpen] = useState(false);
@@ -39,6 +40,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     setLookupStatus("idle");
     setLookupError("");
     setLookupResult(null);
+    setUnit("each"); // here?
   }, [isOpen]);
 
   useEffect(() => {
@@ -46,6 +48,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     setLookupStatus("idle");
     setLookupError("");
     setLookupResult(null);
+    setUnit("each"); // here?
   }, [isLookupOpen]);
   /* ---USEEFFECTS END--- */
 
@@ -76,6 +79,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
         matchedKey: resolved.key,
         seriesId: latest.seriesId || resolved.seriesId,
         price: latest.value,
+        unit: resolved.unit || "each",
         periodName: latest.periodName,
         year: latest.year,
       });
@@ -102,6 +106,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
 
     // set price input from lookup
     setPrice(formatPriceForInput(lookupResult.price));
+    setUnit(lookupResult.unit || "each");
 
     // Auto-pick a category based on matched item
     const suggestedCategory =
@@ -132,6 +137,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     onSubmit({
       item: name.trim(),
       price: parsedPrice,
+      unit: unit?.trim() || "each",
       category: category.trim() || "Surplus",
       priority: priority || "Essential",
     });
@@ -180,6 +186,21 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
               placeholder=""
               required
             />
+          </label>
+          <label className="addmodal__label">
+            Unit
+            <select
+              className="addmodal__input"
+              value={unit}
+              onChange={(e) => setUnit(e.target.value)}
+            >
+              <option value="each">each</option>
+              <option value="per lb">per lb</option>
+              <option value="per oz">per oz</option>
+              <option value="per gal">per gal</option>
+              <option value="per qt">per qt</option>
+              <option value="per dozen">per dozen</option>
+            </select>
           </label>
 
           {/* needs to be dropdown */}
@@ -305,7 +326,10 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
                     </p>
                     <p>
                       Avg price:{" "}
-                      <strong>${lookupResult.price.toFixed(2)}</strong>
+                      <strong>
+                        ${lookupResult.price.toFixed(2)}{" "}
+                        {lookupResult.unit ? `(${lookupResult.unit})` : ""}
+                      </strong>
                     </p>
                     <p className="addmodal__resultMeta">
                       Source: BLS Average Price ({lookupResult.periodName}{" "}
