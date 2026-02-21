@@ -95,6 +95,14 @@
   background: #f1f1f1;
 }
 
+/* MAKE THE -USE PRICE- BUTTON POP WHEN ENABLED */
+.addmodal__lookup-btn_use-price:not(:disabled) {
+  background: #daf6dd;
+  border: 1px solid #098c23;
+  font-weight: 630;
+  box-shadow: #098c23 0px 1px 4px;
+}
+
 .addmodal__lookup-results {
   border: 1px dashed #cfcfcf;
   border-radius: 6px;

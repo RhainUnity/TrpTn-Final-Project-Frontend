@@ -138,7 +138,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
       item: name.trim(),
       price: parsedPrice,
       unit: unit?.trim() || "each",
-      category: category.trim() || "Surplus",
+      category: category.trim() || "Pantry",
       priority: priority || "Essential",
     });
   };
@@ -229,7 +229,6 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
             </select>
           </label>
 
-          {/* // /// Lookup form (UI only for now)  */}
           {/* Button to open lookup form */}
           <label className="addmodal__label">
             Store
@@ -256,11 +255,12 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
                   className="addmodal__input"
                   value={lookupQuery}
                   onChange={(e) => setLookupQuery(e.target.value)}
-                  placeholder="e.g., Nissin Chow Mein"
+                  placeholder="e.g., milk, banana, eggs, rice"
                 />
               </label>
 
-              <label className="addmodal__label">
+              {/* --ZIP CODE FIELD (optional for later geo-based lookup): */}
+              {/* <label className="addmodal__label">
                 ZIP Code
                 <input
                   className="addmodal__input"
@@ -268,7 +268,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
                   onChange={(e) => setLookupZip(e.target.value)}
                   placeholder="optional"
                 />
-              </label>
+              </label> */}
 
               {/* LOOkUP FORM with API integration: */}
               <div className="addmodal__lookup-actions">
@@ -281,9 +281,10 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
                   {lookupStatus === "loading" ? "Searching..." : "Search"}
                 </button>
 
+                {/* USE PRICE FROM LOOKUP BUTTON */}
                 <button
                   type="button"
-                  className="addmodal__lookup-btn"
+                  className="addmodal__lookup-btn addmodal__lookup-btn_use-price"
                   onClick={handleUseLookupPrice}
                   disabled={!lookupResult}
                 >
@@ -299,8 +300,9 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
 
                 {lookupStatus === "idle" && (
                   <p className="addmodal__hint">
-                    Try: <strong>banana</strong> or <strong>milk</strong>. (More
-                    items soon.)
+                    Try: <strong>banana</strong>, <strong>milk</strong>,{" "}
+                    <strong>eggs</strong>, <strong>rice</strong>. (More items
+                    soon.)
                   </p>
                 )}
 
