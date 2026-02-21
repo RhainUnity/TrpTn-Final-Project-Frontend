@@ -14,12 +14,6 @@ function FullList({ items = [], setItems }) {
   // Stage 1
   const [editingId, setEditingId] = useState(null);
 
-  // use later to disable Save button if no changes
-  // const editingRow = useMemo(
-  //   () => items.find((r) => r.id === editingId),
-  //   [items, editingId],
-  // );
-
   const handleAddItem = ({ item, price, unit, category, priority }) => {
     setItems((prev) => [
       ...prev,
@@ -105,7 +99,6 @@ function FullList({ items = [], setItems }) {
           <div className="full__col full__col_category">Category</div>
           <div className="full__col full__col_priority">Priority</div>
           <div className="full__col full__col_price">Price</div>
-          <div className="full__col full__col_unit">Unit</div> {/* BOOKMARK */}
         </div>
 
         {/* Items Info */}
@@ -115,106 +108,109 @@ function FullList({ items = [], setItems }) {
 
             return (
               <div key={row.id} className="full__row">
-                <div className="full__cell full__col_item">
-                  {isEditing ? (
-                    <input
-                      className="full__input"
-                      value={row.item}
-                      onChange={(e) =>
-                        handleChange(row.id, { item: e.target.value })
-                      }
-                    />
-                  ) : (
-                    <span>{row.item}</span>
-                  )}
+                {/* Top item/specs grid */}
+                <div className="full__row-main">
+                  {/* Item name */}
+                  <div className="full__cell full__col_item">
+                    {isEditing ? (
+                      <input
+                        className="full__input"
+                        value={row.item}
+                        onChange={(e) =>
+                          handleChange(row.id, { item: e.target.value })
+                        }
+                      />
+                    ) : (
+                      <span>{row.item}</span>
+                    )}
+                  </div>
+
+                  {/* Category */}
+                  <div className="full__cell full__col_category">
+                    {isEditing ? (
+                      <select
+                        className="full__select"
+                        value={row.category}
+                        onChange={(e) =>
+                          handleChange(row.id, { category: e.target.value })
+                        }
+                      >
+                        <option value="Pantry">Pantry</option>
+                        <option value="Dairy">Dairy</option>
+                        <option value="Meat">Meat</option>
+                      </select>
+                    ) : (
+                      <span>{row.category}</span>
+                    )}
+                  </div>
+
+                  {/* Priority */}
+                  <div className="full__cell full__col_priority">
+                    {isEditing ? (
+                      <select
+                        className="full__select"
+                        value={row.priority}
+                        onChange={(e) =>
+                          handleChange(row.id, { priority: e.target.value })
+                        }
+                      >
+                        <option value="Essential">Essential</option>
+                        <option value="Surplus">Surplus</option>
+                        <option value="Optional">Optional</option>
+                      </select>
+                    ) : (
+                      <span>{row.priority}</span>
+                    )}
+                  </div>
+
+                  {/* Price */}
+                  <div className="full__cell full__col_price">
+                    {isEditing ? (
+                      <div className="full__price-edit">
+                        <input
+                          className="full__input full__input_price"
+                          type="number"
+                          step="0.01"
+                          value={row.price}
+                          onChange={(e) =>
+                            handleChange(row.id, {
+                              price: Number(e.target.value),
+                            })
+                          }
+                        />
+                        <span className="full__slash">/</span>
+                        <select
+                          className="full__select full__select_unit"
+                          value={row.unit ?? "each"}
+                          onChange={(e) =>
+                            handleChange(row.id, { unit: e.target.value })
+                          }
+                        >
+                          <option value="each">each</option>
+                          <option value="lb">lb</option>
+                          <option value="oz">oz</option>
+                          <option value="g">g</option>
+                          <option value="kg">kg</option>
+                          <option value="dozen">dozen</option>
+                          <option value="qt">qt</option>
+                          <option value="gallon">gallon</option>
+                          <option value="bag">bag</option>
+                          <option value="box">box</option>
+                        </select>
+                      </div>
+                    ) : (
+                      <span className="full__price-text">
+                        ${Number(row.price ?? 0).toFixed(2)}
+                        {typeof row.unit === "string" && row.unit.trim()
+                          ? ` / ${row.unit.trim()}`
+                          : ""}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Category */}
-                <div className="full__cell full__col_category">
-                  {isEditing ? (
-                    <select
-                      className="full__select"
-                      value={row.category}
-                      onChange={(e) =>
-                        handleChange(row.id, { category: e.target.value })
-                      }
-                    >
-                      <option value="Pantry">Pantry</option>
-                      <option value="Dairy">Dairy</option>
-                      <option value="Meat">Meat</option>
-                    </select>
-                  ) : (
-                    <span>{row.category}</span>
-                  )}
-                </div>
-
-                {/* Priority */}
-                <div className="full__cell full__col_priority">
-                  {isEditing ? (
-                    <select
-                      className="full__select"
-                      value={row.priority}
-                      onChange={(e) =>
-                        handleChange(row.id, { priority: e.target.value })
-                      }
-                    >
-                      <option value="Essential">Essential</option>
-                      <option value="Surplus">Surplus</option>
-                      <option value="Optional">Optional</option>
-                    </select>
-                  ) : (
-                    <span>{row.priority}</span>
-                  )}
-                </div>
-
-                {/* Price */}
-                <div className="full__cell full__col_price">
-                  {isEditing ? (
-                    <input
-                      className="full__input full__input_price"
-                      type="number"
-                      step="0.01"
-                      value={row.price}
-                      onChange={(e) =>
-                        handleChange(row.id, { price: Number(e.target.value) })
-                      }
-                    />
-                  ) : (
-                    <span>
-                      ${row.price.toFixed(2)}
-                      {row.unit ? ` / ${row.unit}` : ""}
-                    </span>
-                  )}
-                </div>
-
-                {/* Unit */}
-                <div className="full__cell full__col_unit">
-                  {isEditing ? (
-                    <select
-                      className="full__select"
-                      value={row.unit ?? "each"}
-                      onChange={(e) =>
-                        handleChange(row.id, { unit: e.target.value })
-                      }
-                    >
-                      <option value="each">each</option>
-                      <option value="lb">lb</option>
-                      <option value="oz">oz</option>
-                      <option value="g">g</option>
-                      <option value="kg">kg</option>
-                      <option value="dozen">dozen</option>
-                      <option value="qt">qt</option>
-                      <option value="gallon">gallon</option>
-                      <option value="bag">bag</option>
-                      <option value="box">box</option>
-                    </select>
-                  ) : (
-                    <span>{row.unit || "each"}</span>
-                  )}
-                </div>
-
-                {/* Actions */}
-                <div className="full__cell full__col_action">
+                {/* BOTTOM: actions bar */}
+                <div className="full__row-actions">
                   <label className="full__hide">
                     <input
                       className="full__hide-input"

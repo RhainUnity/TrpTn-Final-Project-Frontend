@@ -2,28 +2,49 @@
 import { useEffect, useState } from "react";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import "./RegisterModal.css";
+import { fileToDataUrl } from "../../../utils/dataURL";
 
 function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState("");
+  const [avatarDataUrl, setAvatarDataUrl] = useState("");
 
-  useEffect(() => {
-    if (!avatarFile) {
-      setAvatarPreview("");
-      return;
-    }
+  // ----------------------------------------------------------------------
+  /* ------------  Option to use Url for preview instead of dataUrl  ------------ */
+  // const [avatarPreview, setAvatarPreview] = useState("");
 
-    const url = URL.createObjectURL(avatarFile);
-    setAvatarPreview(url);
+  // useEffect(() => {
+  //   if (!avatarFile) {
+  //     setAvatarPreview("");
+  //     return;
+  //   }
 
-    return () => URL.revokeObjectURL(url);
-  }, [avatarFile]);
+  //   const url = URL.createObjectURL(avatarFile);
+  //   setAvatarPreview(url);
+
+  //   return () => URL.revokeObjectURL(url);
+  // }, [avatarFile]);
+  /* ------------  Option to use Url for preview instead of dataUrl  ------------ */
+  // ------------------------------------------------------------------------
 
   const handleSubmit = () => {
     // no real auth yet — just pass avatar up
     onRegister?.({
-      avatarUrl: avatarPreview || null,
+      avatarUrl: avatarDataUrl || null,
     });
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setAvatarDataUrl("");
+      return;
+    }
+
+    // image guardrails
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > 2 * 1024 * 1024) return; // 2MB
+
+    const dataUrl = await fileToDataUrl(file);
+    setAvatarDataUrl(dataUrl);
   };
 
   return (
@@ -45,15 +66,15 @@ function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
           className="auth__input"
           type="file"
           accept="image/*"
-          onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
+          onChange={handleFileChange}
         />
       </label>
 
-      {avatarPreview && (
+      {avatarDataUrl && (
         <div className="auth__avatar-preview">
           <img
             className="auth__avatar-img"
-            src={avatarPreview}
+            src={avatarDataUrl}
             alt="Avatar preview"
           />
         </div>

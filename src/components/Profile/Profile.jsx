@@ -1,12 +1,14 @@
 // src/components/Profile/Profile.jsx
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import "./Profile.css";
+import { fileToDataUrl } from "../../utils/dataURL";
+import defaultAvatar from "../../assets/default-avatar.svg";
 
 function Profile({ isLoggedIn, user, itemCount, onUpdateAvatar }) {
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
-    setAvatarUrl(user?.avatarUrl || "");
+    setPreviewUrl(user?.avatarUrl || "");
   }, [user]);
 
   if (!isLoggedIn) {
@@ -18,13 +20,23 @@ function Profile({ isLoggedIn, user, itemCount, onUpdateAvatar }) {
     );
   }
 
-const handleSave = () => {
-    const trimmed = avatarUrl.trim();
-    onUpdateAvatar?.({ avatarUrl: trimmed || null });
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > 2 * 1024 * 1024) return;
+
+    const dataUrl = await fileToDataUrl(file);
+    setPreviewUrl(dataUrl);
+  };
+
+  const handleSave = () => {
+    onUpdateAvatar?.({ avatarUrl: previewUrl || null });
   };
 
   const handleReset = () => {
-    setAvatarUrl(user?.avatarUrl || null);
+    setPreviewUrl(user?.avatarUrl || "");
   };
 
   return (
@@ -34,7 +46,7 @@ const handleSave = () => {
       <div className="profile__card">
         <img
           className="profile__avatar"
-          src={user?.avatarUrl || "https://via.placeholder.com/96?text=User"}
+          src={previewUrl || defaultAvatar}
           alt="Avatar"
         />
 
@@ -47,15 +59,14 @@ const handleSave = () => {
           </p>
         </div>
       </div>
-       <div className="profile__editor">
+      <div className="profile__editor">
         <label className="profile__label">
-          Avatar URL
+          Upload URL
           <input
             className="profile__input"
-            type="url"
-            value={avatarUrl}
-            onChange={(e) => setAvatarUrl(e.target.value)}
-            placeholder="https://example.com/avatar.png"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
           />
         </label>
 

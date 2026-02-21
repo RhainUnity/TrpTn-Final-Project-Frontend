@@ -95,13 +95,13 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
   const formatPriceForInput = (n) => {
     const num = Number(n);
     if (Number.isNaN(num)) return "";
-    return num.toFixed(2); // keeps it clean like 1.23
+    return num.toFixed(2); // normal 2 decimal spots for dollars
   };
 
   const handleUseLookupPrice = () => {
     if (!lookupResult) return;
 
-    // optional: set the name based on what matched (or keep user’s typed name)
+    // set the name based on what matched (or keep user’s typed name)
     setName((prev) => (prev.trim() ? prev : lookupResult.matchedKey));
 
     // set price input from lookup
@@ -269,21 +269,6 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
                   placeholder="optional"
                 />
               </label>
-
-              {/* <div className="addmodal__lookup-actions">
-                <button type="button" className="addmodal__lookup-btn" disabled>
-                  Search (coming soon)
-                </button>
-                <button type="button" className="addmodal__lookup-btn" disabled>
-                  Use Selected Price (coming soon)
-                </button>
-              </div>
-
-              <div className="addmodal__lookup-results">
-                <p className="addmodal__hint">
-                  Results will appear here (API later).
-                </p>
-              </div> */}
 
               {/* LOOkUP FORM with API integration: */}
               <div className="addmodal__lookup-actions">

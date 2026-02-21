@@ -1,6 +1,7 @@
 // src/components/Header/Header.jsx
 import { Link, NavLink } from "react-router-dom";
 import "./Header.css";
+import defaultAvatar from "../../assets/default-avatar.svg";
 
 function Header({ isLoggedIn, email, avatarUrl, onOpenLogin, onSignOut }) {
   return (
@@ -29,7 +30,13 @@ function Header({ isLoggedIn, email, avatarUrl, onOpenLogin, onSignOut }) {
                   src={avatarUrl}
                   alt="Profile avatar"
                 />
-              ) : null}
+              ) : (
+                <img
+                  className="header__avatar-img"
+                  src={defaultAvatar}
+                  alt="Default avatar"
+                />
+              )}
             </span>
           </NavLink>
         ) : (

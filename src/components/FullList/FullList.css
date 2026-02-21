@@ -13,7 +13,7 @@
   margin: 0 auto 14px;
 }
 
-/* Wrap tabs + Add Item together */
+/* Wrap tabs + Add Items together */
 .full__tabs-wrap {
   display: flex;
   flex-direction: column;
@@ -82,7 +82,7 @@
 /* Header row */
 .full__header-row {
   display: grid;
-  grid-template-columns: 3.7fr 1fr 1.09fr 0.72fr;
+  grid-template-columns: 3.8fr 1.19fr 1.09fr 2.7fr;
   padding: 6px 8px;
   border-bottom: 1px solid #cfcfcf;
   font-weight: 700;
@@ -91,11 +91,29 @@
 
 /* Rows */
 .full__row {
+  padding: 10px 8px;
+  border-top: 1px solid #cfe6d4;
+}
+
+.full__row:first-child {
+  border-top: none;
+}
+
+/* Top line uses the grid */
+.full__row-main {
   display: grid;
-  grid-template-columns: 3.7fr 1fr 1.09fr 0.72fr;
+  grid-template-columns: 3.7fr 1fr 1.09fr 2.7fr;
   align-items: start;
   gap: 8px;
-  padding: 10px 8px;
+}
+
+/* Bottom line is actions row */
+.full__row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .full__body {
@@ -172,4 +190,28 @@
 .full__btn_danger {
   border-color: #c33;
   color: #c33;
+}
+
+.full__price-edit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.full__slash {
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+.full__select_unit {
+  max-width: 110px;
+}
+
+.full__price-text {
+  white-space: nowrap;
+}
+
+.full__price-edit {
+  flex-wrap: nowrap;
 }

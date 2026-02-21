@@ -24,3 +24,6 @@ export function resolveSeriesId(query) {
 
   return { key: match, ...BLS_SERIES_MAP[match] };
 }
+
+// LATER: could add more advanced matching logic here, like fuzzy search or partial match,
+//  to handle more user input variations. For now it’s just simple includes() check.
