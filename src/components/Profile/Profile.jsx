@@ -1,15 +1,12 @@
 // src/components/Profile/Profile.jsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./Profile.css";
 import { fileToDataUrl } from "../../utils/dataURL";
 import defaultAvatar from "../../assets/default-avatar.svg";
 
 function Profile({ isLoggedIn, user, itemCount, onUpdateAvatar }) {
-  const [previewUrl, setPreviewUrl] = useState("");
-
-  useEffect(() => {
-    setPreviewUrl(user?.avatarUrl || "");
-  }, [user]);
+  // local draft (preview) avatar
+  const [previewUrl, setPreviewUrl] = useState(user?.avatarUrl || "");
 
   if (!isLoggedIn) {
     return (
@@ -59,9 +56,10 @@ function Profile({ isLoggedIn, user, itemCount, onUpdateAvatar }) {
           </p>
         </div>
       </div>
+
       <div className="profile__editor">
         <label className="profile__label">
-          Upload URL
+          Upload Avatar
           <input
             className="profile__input"
             type="file"
@@ -74,6 +72,7 @@ function Profile({ isLoggedIn, user, itemCount, onUpdateAvatar }) {
           <button className="profile__btn" type="button" onClick={handleSave}>
             Save Avatar
           </button>
+
           <button
             className="profile__btn profile__btn--secondary"
             type="button"

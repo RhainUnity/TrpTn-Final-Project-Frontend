@@ -22,7 +22,23 @@ function App() {
   const STORE_TABS = ["WinCo", "Safeway", "Albertson’s"];
   const [activeStore, setActiveStore] = useState("Safeway");
 
-  const [userItems, setUserItems] = useState(() => readJSON("userItems", {}));
+  /* ------------------------------ */
+  // One-time migration: convert old array format to store-based format
+  const [userItems, setUserItems] = useState(() => {
+    const stored = readJSON("userItems", {});
+    const userKey = readJSON("currentUser", null)?.id || "guest";
+
+    const existing = stored[userKey];
+    if (Array.isArray(existing)) {
+      return {
+        ...stored,
+        [userKey]: { Safeway: existing },
+      };
+    }
+
+    return stored;
+  });
+  /* ------------------------------ */
 
   const isLoggedIn = Boolean(currentUser);
 
@@ -30,28 +46,6 @@ function App() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
   const userKey = currentUser?.id || "guest";
-
-  /* ------------------------------ */
-  // One-time migration: convert old array format to store-based format
-  useEffect(() => {
-    setUserItems((prev) => {
-      const existing = prev[userKey];
-
-      // If old format (array), convert to object keyed by store
-      if (Array.isArray(existing)) {
-        return {
-          ...prev,
-          [userKey]: {
-            Safeway: existing, // default old items into Safeway
-          },
-        };
-      }
-
-      return prev;
-    });
-    // clean up
-  }, [userKey]);
-  /* ------------------------------ */
 
   // Ensure we always have an object for this user
   const storeLists = userItems[userKey] || {};
@@ -80,24 +74,6 @@ function App() {
   // Wrapper so components can just call setItems(updater)
   const setItemsForActiveStore = (updater) =>
     setItemsForUserStore(activeStore, updater);
-
-  /* ---Deprecated user-specific items handler (replaced by userItems state)--- */
-  // const userKey = currentUser?.id || "guest";
-  // const items = userItems[userKey] || [];
-
-  // const setItemsForUser = (updater) => {
-  //   setUserItems((prev) => {
-  //     const current = prev[userKey] || [];
-  //     const nextItems =
-  //       typeof updater === "function" ? updater(current) : updater;
-
-  //     return {
-  //       ...prev,
-  //       [userKey]: nextItems,
-  //     };
-  //   });
-  // };
-  /* ---END: Deprecated user-specific items handler (replaced by userItems state)--- */
 
   // ------//////////// temporoary persistence of current user ////////////
   useEffect(() => {
@@ -188,17 +164,6 @@ function App() {
               />
             }
           />
-
-          {/* ---Deprecated code--- */}
-          {/* <Route
-            path="/"
-            element={<Main items={items} setItems={setItemsForUser} />}
-          />
-          <Route
-            path="/full-list"
-            element={<FullList items={items} setItems={setItemsForUser} />}
-          /> */}
-
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

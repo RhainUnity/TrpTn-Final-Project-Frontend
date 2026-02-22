@@ -1,5 +1,5 @@
 // src/components/Modals/RegisterModal/RegisterModal.jsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import "./RegisterModal.css";
 import { fileToDataUrl } from "../../../utils/dataURL";

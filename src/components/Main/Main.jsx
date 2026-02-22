@@ -1,5 +1,5 @@
 // src/components/Main/Main.jsx
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Main.css";
 
@@ -12,12 +12,6 @@ function Main({
 }) {
   const [filterCategory, setFilterCategory] = useState("All");
   const [filterPriority, setFilterPriority] = useState("All");
-
-  // When switching stores, reset filters
-  useEffect(() => {
-    setFilterCategory("All");
-    setFilterPriority("All");
-  }, [activeStore]);
 
   const total = useMemo(
     () =>
@@ -78,7 +72,11 @@ function Main({
               className={`main__store-tab ${
                 activeStore === store ? "main__store-tab_active" : ""
               }`}
-              onClick={() => setActiveStore(store)}
+              onClick={() => {
+                setActiveStore(store);
+                setFilterCategory("All");
+                setFilterPriority("All");
+              }}
               aria-pressed={activeStore === store}
             >
               {store}
@@ -102,7 +100,7 @@ function Main({
               </select>
             </label>
 
-            {/* Filter Prioroty */}
+            {/* Filter Priority */}
             <label className="main__field">
               <span className="main__label">Filter priority:</span>
               <select
