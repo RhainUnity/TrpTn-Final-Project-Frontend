@@ -49,10 +49,8 @@ function App() {
 
       return prev;
     });
-
-    // Run once on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // clean up
+  }, [userKey]);
   /* ------------------------------ */
 
   // Ensure we always have an object for this user
@@ -116,6 +114,7 @@ function App() {
 
   const handleSignOut = () => {
     setCurrentUser(null);
+    setActiveStore("Safeway"); // reset to default store on sign out
   };
   // -----//////////////////////////////////
 

@@ -5,10 +5,16 @@ import "./FullList.css";
 import AddItemModal from "../Modals/AddItemModal/AddItemModal";
 import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal/ConfirmDeleteModal";
 
-const STORE_TABS = ["WinCo", "Safeway", "Albertson’s"];
+// ----DELETE THIS >>const STORE_TABS = ["WinCo", "Safeway", "Albertson’s"];
 
-function FullList({ items = [], setItems }) {
-  const [activeStore, setActiveStore] = useState("Safeway");
+function FullList({
+  items = [],
+  setItems,
+  activeStore,
+  setActiveStore,
+  stores,
+}) {
+  // ----DELETE THIS >>const [activeStore, setActiveStore] = useState("Safeway");
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [deleteItem, setDeleteItem] = useState(null);
   // Stage 1
@@ -68,7 +74,7 @@ function FullList({ items = [], setItems }) {
     <section className="full">
       <div className="full__tabs-wrap">
         <div className="full__tabs">
-          {STORE_TABS.map((store) => (
+          {stores.map((store) => (
             <button
               key={store}
               type="button"
@@ -171,7 +177,7 @@ function FullList({ items = [], setItems }) {
                           className="full__input full__input_price"
                           type="number"
                           step="0.01"
-                          value={row.price}
+                          value={row.price ?? 0}
                           onChange={(e) =>
                             handleChange(row.id, {
                               price: Number(e.target.value),

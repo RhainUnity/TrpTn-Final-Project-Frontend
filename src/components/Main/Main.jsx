@@ -1,11 +1,23 @@
 // src/components/Main/Main.jsx
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Main.css";
 
-function Main({ items = [], setItems }) {
+function Main({
+  items = [],
+  setItems,
+  activeStore,
+  setActiveStore,
+  stores = [],
+}) {
   const [filterCategory, setFilterCategory] = useState("All");
   const [filterPriority, setFilterPriority] = useState("All");
+
+  // When switching stores, reset filters
+  useEffect(() => {
+    setFilterCategory("All");
+    setFilterPriority("All");
+  }, [activeStore]);
 
   const total = useMemo(
     () =>
@@ -29,22 +41,23 @@ function Main({ items = [], setItems }) {
     );
   };
 
-  const applyVisibilityFromFilters = (nextCategory, nextPriority) => {
-    setItems((prev) =>
-      prev.map((i) => {
-        const matchCategory =
-          nextCategory === "All" || i.category === nextCategory;
+  /* -----DEPRECATED CODE?-----*/
+  // const applyVisibilityFromFilters = (nextCategory, nextPriority) => {
+  //   setItems((prev) =>
+  //     prev.map((i) => {
+  //       const matchCategory =
+  //         nextCategory === "All" || i.category === nextCategory;
 
-        const matchPriority =
-          nextPriority === "All" || i.priority === nextPriority;
+  //       const matchPriority =
+  //         nextPriority === "All" || i.priority === nextPriority;
 
-        // show matches, hide non-matches
-        const shouldShow = matchCategory && matchPriority;
+  //       // show matches, hide non-matches
+  //       const shouldShow = matchCategory && matchPriority;
 
-        return { ...i, hidden: !shouldShow };
-      }),
-    );
-  };
+  //       return { ...i, hidden: !shouldShow };
+  //     }),
+  //   );
+  // };
 
   // item variables to be implemented from backend later
 
@@ -64,7 +77,7 @@ function Main({ items = [], setItems }) {
     (i) => matchesCategory(i) && matchesPriority(i),
   );
 
-  const mainItem = filteredItems[0];
+  // DELETE??? >>>> const mainItem = filteredItems[0];
 
   const getUnitLabel = (unit) => {
     if (typeof unit === "string") return unit.trim() || "each";
@@ -74,6 +87,22 @@ function Main({ items = [], setItems }) {
   return (
     <section className="main">
       <div className="main__panel">
+        {/* ---NEW FEATURE: Store Tabs--- */}
+        <div className="main__stores">
+          {stores.map((store) => (
+            <button
+              key={store}
+              type="button"
+              className={`main__store-tab ${
+                activeStore === store ? "main__store-tab_active" : ""
+              }`}
+              onClick={() => setActiveStore(store)}
+              aria-pressed={activeStore === store}
+            >
+              {store}
+            </button>
+          ))}
+        </div>
         <div className="main__top">
           <div className="main__filters">
             {/* Filter Category */}

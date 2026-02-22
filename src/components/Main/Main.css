@@ -176,3 +176,22 @@
   opacity: 0.7;
   margin-left: 6px;
 }
+
+/* store tabs */
+.main__stores {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.main__store-tab {
+  padding: 6px 12px;
+  border: 2px solid #7fb88a;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.main__store-tab_active {
+  background: #1ff008d9;
+}
