@@ -15,10 +15,12 @@ import LoginModal from "../Modals/LoginModal/LoginModal";
 import RegisterModal from "../Modals/RegisterModal/RegisterModal";
 
 function App() {
-
   const [currentUser, setCurrentUser] = useState(() =>
     readJSON("currentUser", null),
   );
+
+  const STORE_TABS = ["WinCo", "Safeway", "Albertson’s"];
+  const [activeStore, setActiveStore] = useState("Safeway");
 
   const [userItems, setUserItems] = useState(() => readJSON("userItems", {}));
 
@@ -28,22 +30,78 @@ function App() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
   const userKey = currentUser?.id || "guest";
-  const items = userItems[userKey] || [];
 
-  const setItemsForUser = (updater) => {
+  /* ------------------------------ */
+  // One-time migration: convert old array format to store-based format
+  useEffect(() => {
     setUserItems((prev) => {
-      const current = prev[userKey] || [];
-      const nextItems =
-        typeof updater === "function" ? updater(current) : updater;
+      const existing = prev[userKey];
+
+      // If old format (array), convert to object keyed by store
+      if (Array.isArray(existing)) {
+        return {
+          ...prev,
+          [userKey]: {
+            Safeway: existing, // default old items into Safeway
+          },
+        };
+      }
+
+      return prev;
+    });
+
+    // Run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  /* ------------------------------ */
+
+  // Ensure we always have an object for this user
+  const storeLists = userItems[userKey] || {};
+
+  // Items for the currently selected store
+  const items = storeLists[activeStore] || [];
+
+  // Store-specific setter
+  const setItemsForUserStore = (store, updater) => {
+    setUserItems((prev) => {
+      const userData = prev[userKey] || {};
+      const currentStoreItems = userData[store] || [];
+      const nextStoreItems =
+        typeof updater === "function" ? updater(currentStoreItems) : updater;
 
       return {
         ...prev,
-        [userKey]: nextItems,
+        [userKey]: {
+          ...userData,
+          [store]: nextStoreItems,
+        },
       };
     });
   };
 
-  // //////////// temporoary persistence of current user ////////////
+  // Wrapper so components can just call setItems(updater)
+  const setItemsForActiveStore = (updater) =>
+    setItemsForUserStore(activeStore, updater);
+
+  /* ---Deprecated user-specific items handler (replaced by userItems state)--- */
+  // const userKey = currentUser?.id || "guest";
+  // const items = userItems[userKey] || [];
+
+  // const setItemsForUser = (updater) => {
+  //   setUserItems((prev) => {
+  //     const current = prev[userKey] || [];
+  //     const nextItems =
+  //       typeof updater === "function" ? updater(current) : updater;
+
+  //     return {
+  //       ...prev,
+  //       [userKey]: nextItems,
+  //     };
+  //   });
+  // };
+  /* ---END: Deprecated user-specific items handler (replaced by userItems state)--- */
+
+  // ------//////////// temporoary persistence of current user ////////////
   useEffect(() => {
     if (currentUser) {
       writeJSON("currentUser", currentUser);
@@ -59,7 +117,7 @@ function App() {
   const handleSignOut = () => {
     setCurrentUser(null);
   };
-  // //////////////////////////////////
+  // -----//////////////////////////////////
 
   const closeAllModals = () => {
     setIsLoginOpen(false);
@@ -98,7 +156,9 @@ function App() {
                 user={currentUser}
                 itemCount={items.length}
                 onUpdateAvatar={(avatarPatch) =>
-                  setCurrentUser((prev) => (prev ? { ...prev, ...avatarPatch } : prev))
+                  setCurrentUser((prev) =>
+                    prev ? { ...prev, ...avatarPatch } : prev,
+                  )
                 }
               />
             }
@@ -106,12 +166,39 @@ function App() {
 
           <Route
             path="/"
+            element={
+              <Main
+                items={items}
+                setItems={setItemsForActiveStore}
+                activeStore={activeStore}
+                setActiveStore={setActiveStore}
+                stores={STORE_TABS}
+              />
+            }
+          />
+
+          <Route
+            path="/full-list"
+            element={
+              <FullList
+                items={items}
+                setItems={setItemsForActiveStore}
+                activeStore={activeStore}
+                setActiveStore={setActiveStore}
+                stores={STORE_TABS}
+              />
+            }
+          />
+
+          {/* ---Deprecated code--- */}
+          {/* <Route
+            path="/"
             element={<Main items={items} setItems={setItemsForUser} />}
           />
           <Route
             path="/full-list"
             element={<FullList items={items} setItems={setItemsForUser} />}
-          />
+          /> */}
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

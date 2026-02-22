@@ -17,7 +17,9 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
 
   // fields for lookup form (UI only for now)
   const [lookupQuery, setLookupQuery] = useState("");
-  const [lookupZip, setLookupZip] = useState("");
+
+  /* ---MAYBE LATER for geo-based lookup?--- */
+  // ----const [lookupZip, setLookupZip] = useState("");
 
   const [lookupStatus, setLookupStatus] = useState("idle"); // idle | loading | error | done
   const [lookupError, setLookupError] = useState("");
@@ -35,7 +37,9 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     setIsLookupOpen(false);
     setLookupQuery("");
     //  setLookupStore("Safeway");
-    setLookupZip("");
+
+    /* ---MAYBE LATER for geo-based lookup?--- */
+    // ---setLookupZip("");
 
     setLookupStatus("idle");
     setLookupError("");
@@ -124,7 +128,9 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     setLookupError("");
     setLookupResult(null);
     setLookupQuery("");
-    setLookupZip("");
+
+    /* ---MAYBE LATER for geo-based lookup?--- */
+    // ---setLookupZip("");
   };
   /* ---END Lookup Handlers--- */
 
