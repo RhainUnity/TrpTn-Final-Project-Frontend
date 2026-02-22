@@ -28,7 +28,7 @@ function Main({
   const handleInc = (id) => {
     setItems((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, qty: item.qty + 1 } : item,
+        item.id === id ? { ...item, qty: (item.qty ?? 0) + 1 } : item,
       ),
     );
   };
@@ -36,28 +36,12 @@ function Main({
   const handleDec = (id) => {
     setItems((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, qty: Math.max(0, item.qty - 1) } : item,
+        item.id === id
+          ? { ...item, qty: Math.max(0, (item.qty ?? 0) - 1) }
+          : item,
       ),
     );
   };
-
-  /* -----DEPRECATED CODE?-----*/
-  // const applyVisibilityFromFilters = (nextCategory, nextPriority) => {
-  //   setItems((prev) =>
-  //     prev.map((i) => {
-  //       const matchCategory =
-  //         nextCategory === "All" || i.category === nextCategory;
-
-  //       const matchPriority =
-  //         nextPriority === "All" || i.priority === nextPriority;
-
-  //       // show matches, hide non-matches
-  //       const shouldShow = matchCategory && matchPriority;
-
-  //       return { ...i, hidden: !shouldShow };
-  //     }),
-  //   );
-  // };
 
   // item variables to be implemented from backend later
 
@@ -76,8 +60,6 @@ function Main({
   const filteredItems = visibleItems.filter(
     (i) => matchesCategory(i) && matchesPriority(i),
   );
-
-  // DELETE??? >>>> const mainItem = filteredItems[0];
 
   const getUnitLabel = (unit) => {
     if (typeof unit === "string") return unit.trim() || "each";
@@ -204,7 +186,9 @@ function Main({
             ))}
           </div>
         )}
-        <p className="main__totalline">Cart total: ${total.toFixed(2)}</p>
+        <p className="main__totalline">
+          Cart total ({activeStore}): ${total.toFixed(2)}
+        </p>
       </div>
     </section>
   );
