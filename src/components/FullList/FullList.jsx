@@ -5,8 +5,6 @@ import "./FullList.css";
 import AddItemModal from "../Modals/AddItemModal/AddItemModal";
 import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal/ConfirmDeleteModal";
 
-// ----DELETE THIS >>const STORE_TABS = ["WinCo", "Safeway", "Albertson’s"];
-
 function FullList({
   items = [],
   setItems,
@@ -14,7 +12,6 @@ function FullList({
   setActiveStore,
   stores,
 }) {
-  // ----DELETE THIS >>const [activeStore, setActiveStore] = useState("Safeway");
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [deleteItem, setDeleteItem] = useState(null);
   // Stage 1

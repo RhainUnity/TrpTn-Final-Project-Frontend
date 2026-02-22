@@ -36,7 +36,6 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     //  reset lookup form too
     setIsLookupOpen(false);
     setLookupQuery("");
-    //  setLookupStore("Safeway");
 
     /* ---MAYBE LATER for geo-based lookup?--- */
     // ---setLookupZip("");
