@@ -18,12 +18,16 @@ function Header({ isLoggedIn, email, avatarUrl, onOpenLogin, onSignOut }) {
 
       {/* CENTER LABEL/BUTTON */}
       <div className="header__center">
-        {isCartPage && <span className="header__cart-label">Your Cart</span>}
+        {isCartPage && (
+          <span className="header__cart-label btn btn--outline btn--sm">
+            Your Cart
+          </span> // **
+        )}
 
         {isFullListPage && (
-          <Link to="/" className="header__cart-button">
+          <Link to="/" className="header__cart-button btn btn--outline">
             Back to Cart
-          </Link>
+          </Link> // **
         )}
       </div>
 
@@ -70,13 +74,21 @@ function Header({ isLoggedIn, email, avatarUrl, onOpenLogin, onSignOut }) {
 
         {/* Sign In / Out Button */}
         {isLoggedIn ? (
-          <button className="header__btn" type="button" onClick={onSignOut}>
+          <button
+            className="btn btn--outline btn--sm"
+            type="button"
+            onClick={onSignOut}
+          >
             Sign Out
-          </button>
+          </button> // **
         ) : (
-          <button className="header__btn" type="button" onClick={onOpenLogin}>
+          <button
+            className="btn btn--primary btn--sm"
+            type="button"
+            onClick={onOpenLogin}
+          >
             Sign In
-          </button>
+          </button> // **
         )}
       </nav>
     </header>

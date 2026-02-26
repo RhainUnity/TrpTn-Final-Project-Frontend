@@ -75,7 +75,7 @@ function FullList({
             <button
               key={store}
               type="button"
-              className={`full__tab ${activeStore === store ? "full__tab_active" : ""}`}
+              className={`full__tab ${activeStore === store ? "full__tab_active" : ""} btn ${activeStore === store ? "btn--primary" : "btn--outline"}`} // **
               onClick={() => setActiveStore(store)}
             >
               {store}
@@ -86,7 +86,7 @@ function FullList({
         {/* Add Item button */}
         <div className="full__additem-wrap">
           <button
-            className="full__additem-btn"
+            className="full__additem-btn btn btn--primary" // **
             type="button"
             onClick={() => setIsAddOpen(true)}
           >
@@ -229,7 +229,7 @@ function FullList({
                   {isEditing ? (
                     <div className="full__actions">
                       <button
-                        className="full__btn"
+                        className="btn btn--primary btn--sm full__btnSmall" // **
                         type="button"
                         onClick={handleSave}
                       >
@@ -237,7 +237,7 @@ function FullList({
                       </button>
 
                       <button
-                        className="full__btn full__btn_danger"
+                        className="btn btn--outline btn--sm full__btnSmall" // **
                         type="button"
                         onClick={() => requestDelete(row)}
                       >
@@ -245,7 +245,7 @@ function FullList({
                       </button>
 
                       <button
-                        className="full__btn"
+                        className="btn btn--outline btn--sm full__btnSmall" // **
                         type="button"
                         onClick={handleCancel}
                       >
@@ -254,7 +254,7 @@ function FullList({
                     </div>
                   ) : (
                     <button
-                      className="full__btn"
+                      className="btn btn--outline btn--sm full__btnSmall" // **
                       type="button"
                       onClick={() => setEditingId(row.id)}
                     >
