@@ -69,9 +69,11 @@ function Main({
             <button
               key={store}
               type="button"
-              className={`main__store-tab ${
-                activeStore === store ? "main__store-tab_active" : ""
-              }`}
+              className={`main__store-tab btn ${
+                activeStore === store
+                  ? "btn--primary main__store-tab_active"
+                  : "btn--outline"
+              }`} // **
               onClick={() => {
                 setActiveStore(store);
                 setFilterCategory("All");
@@ -83,43 +85,58 @@ function Main({
             </button>
           ))}
         </div>
+
         <div className="main__top">
           <div className="main__filters">
             {/* Filter Category */}
             <label className="main__field">
               <span className="main__label">Filter category:</span>
-              <select
-                className="main__select"
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-              >
-                <option value="All">All</option>
-                <option value="Pantry">Pantry</option>
-                <option value="Dairy">Dairy</option>
-                <option value="Meat">Meat</option>
-              </select>
+              <div className="main__select-wrap">
+                {" "}
+                {/* ** */}
+                <select
+                  className="main__select"
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                >
+                  <option value="All">All</option>
+                  <option value="Pantry">Pantry</option>
+                  <option value="Dairy">Dairy</option>
+                  <option value="Meat">Meat</option>
+                </select>
+                <span className="main__select-arrow" aria-hidden="true" />{" "}
+                {/* ** */}
+              </div>{" "}
+              {/* ** */}
             </label>
 
             {/* Filter Priority */}
             <label className="main__field">
               <span className="main__label">Filter priority:</span>
-              <select
-                className="main__select"
-                value={filterPriority}
-                onChange={(e) => setFilterPriority(e.target.value)}
-              >
-                <option value="All">All</option>
-                <option value="Essential">Essential</option>
-                <option value="Surplus">Surplus</option>
-                <option value="Optional">Optional</option>
-              </select>
+              <div className="main__select-wrap">
+                {" "}
+                {/* ** */}
+                <select
+                  className="main__select"
+                  value={filterPriority}
+                  onChange={(e) => setFilterPriority(e.target.value)}
+                >
+                  <option value="All">All</option>
+                  <option value="Essential">Essential</option>
+                  <option value="Surplus">Surplus</option>
+                  <option value="Optional">Optional</option>
+                </select>
+                <span className="main__select-arrow" aria-hidden="true" />{" "}
+                {/* ** */}
+              </div>{" "}
+              {/* ** */}
             </label>
           </div>
 
           {/* Edit Actions */}
           <div className="main__actions">
             <Link
-              className="main__action-btn main__action-link"
+              className="main__action-btn main__action-link btn btn--primary" // **
               to="/full-list"
             >
               Open Full List
@@ -151,7 +168,7 @@ function Main({
                     aria-label="Quantity controls"
                   >
                     <button
-                      className="main__qty-btn"
+                      className="main__qty-btn btn btn--outline btn--sm" // **
                       type="button"
                       onClick={() => handleDec(row.id)}
                       aria-label={`Decrease quantity of ${row.item}`}
@@ -167,7 +184,7 @@ function Main({
                     </span>
 
                     <button
-                      className="main__qty-btn"
+                      className="main__qty-btn btn btn--outline btn--sm" // **
                       type="button"
                       onClick={() => handleInc(row.id)}
                       aria-label={`Increase quantity of ${row.item}`}
@@ -184,6 +201,7 @@ function Main({
             ))}
           </div>
         )}
+
         <p className="main__totalline">
           Cart total ({activeStore}): ${total.toFixed(2)}
         </p>
