@@ -16,7 +16,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
   // toggle button for lookup form
   const [isLookupOpen, setIsLookupOpen] = useState(false);
 
-  // fields for lookup form (UI only for now)
+  // fields for lookup form
   const [lookupQuery, setLookupQuery] = useState("");
 
   /* ---MAYBE LATER for geo-based lookup?--- */
