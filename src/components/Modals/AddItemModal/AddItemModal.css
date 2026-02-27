@@ -1,78 +1,41 @@
-/*  src/components/Modals/AddItemModal/AddItemModal.css */
-
-.addmodal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-}
-
-.addmodal__content {
-  width: 320px;
-  background: #f6f6f6;
-  border: 2px solid #7fb88a;
-  border-radius: 8px;
-  padding: 18px 16px 16px;
-  position: relative;
-}
-
-.addmodal__close {
-  position: absolute;
-  top: 6px;
-  right: 10px;
-  border: none;
-  background: transparent;
-  font-size: 22px;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.addmodal__form {
-  display: grid;
-  gap: 14px;
-}
+/* src/components/Modals/AddItemModal/AddItemModal.css */
 
 .addmodal__label {
   display: grid;
   gap: 6px;
   font-size: 14px;
-  color: #1e1e1e;
+  color: var(--color-text);
+  font-weight: 600;
 }
 
 .addmodal__input {
-  height: 30px;
-  border-radius: 6px;
-  border: 1px solid #7fb88a;
-  padding: 0 10px;
-  background: #fff;
+  height: 44px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--color-border);
+  padding: 0 12px;
+  background: var(--color-bg-card);
+  color: var(--color-text);
+  font-size: 16px;
+  outline: none;
+}
+
+.addmodal__input:focus {
+  border-color: var(--color-primary);
 }
 
 .addmodal__submit {
-  height: 34px;
-  border-radius: 6px;
-  border: 1px solid #2a6a37;
-  background: linear-gradient(#9bba9f, #66a373);
-  cursor: pointer;
-  font-weight: 700;
+  width: 100%;
 }
 
 .addmodal__secondary {
-  height: 32px;
-  border-radius: 6px;
-  border: 1px solid #2a6a37;
-  background: #f1f1f1;
-  cursor: pointer;
-  font-weight: 700;
+  width: 100%;
 }
 
 .addmodal__lookup {
-  border: 1px solid #7fb88a;
-  border-radius: 8px;
-  padding: 10px;
-  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 12px;
+  background: var(--color-bg-card);
   display: grid;
   gap: 10px;
 }
@@ -85,53 +48,45 @@
 .addmodal__lookup-actions {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
-.addmodal__lookup-btn {
-  height: 28px;
-  padding: 0 10px;
-  border-radius: 6px;
-  border: 1px solid #7fb88a;
-  background: #f1f1f1;
-}
-
-/* MAKE THE -USE PRICE- BUTTON POP WHEN ENABLED */
 .addmodal__lookup-btn_use-price:not(:disabled) {
-  background: #daf6dd;
-  border: 1px solid #098c23;
-  font-weight: 630;
-  box-shadow: #098c23 0px 1px 4px;
+  /* keep “pop” effect */
+  box-shadow: var(--shadow-button);
 }
 
 .addmodal__lookup-results {
-  border: 1px dashed #cfcfcf;
-  border-radius: 6px;
-  padding: 8px;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--color-bg-page);
 }
 
 .addmodal__hint {
   margin: 0;
-  font-size: 13px;
-  color: #666;
+  font-size: 14px;
+  color: var(--color-text-muted);
 }
 
-/* ADD MODAL LOOKUP FORM: */
 .addmodal__error {
   margin: 8px 0;
   color: #b00020;
 }
 
 .addmodal__resultCard {
-  border: 1px solid #ddd;
-  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   padding: 10px;
   margin-top: 8px;
+  background: var(--color-bg-card);
 }
 
 .addmodal__resultTitle {
   margin: 0 0 6px;
   font-weight: 600;
 }
+
 .addmodal__resultMeta {
   margin: 6px 0 0;
   font-size: 12px;

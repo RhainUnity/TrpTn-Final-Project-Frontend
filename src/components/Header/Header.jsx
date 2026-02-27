@@ -21,13 +21,13 @@ function Header({ isLoggedIn, email, avatarUrl, onOpenLogin, onSignOut }) {
         {isCartPage && (
           <span className="header__cart-label btn btn--outline btn--sm">
             Your Cart
-          </span> // **
+          </span>
         )}
 
         {isFullListPage && (
           <Link to="/" className="header__cart-button btn btn--outline">
             Back to Cart
-          </Link> // **
+          </Link>
         )}
       </div>
 
@@ -80,7 +80,7 @@ function Header({ isLoggedIn, email, avatarUrl, onOpenLogin, onSignOut }) {
             onClick={onSignOut}
           >
             Sign Out
-          </button> // **
+          </button>
         ) : (
           <button
             className="btn btn--primary btn--sm"
@@ -88,7 +88,7 @@ function Header({ isLoggedIn, email, avatarUrl, onOpenLogin, onSignOut }) {
             onClick={onOpenLogin}
           >
             Sign In
-          </button> // **
+          </button>
         )}
       </nav>
     </header>

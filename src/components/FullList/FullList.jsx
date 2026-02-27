@@ -86,7 +86,7 @@ function FullList({
         {/* Add Item button */}
         <div className="full__additem-wrap">
           <button
-            className="full__additem-btn btn btn--primary" // **
+            className="full__additem-btn btn btn--primary"
             type="button"
             onClick={() => setIsAddOpen(true)}
           >
@@ -229,7 +229,7 @@ function FullList({
                   {isEditing ? (
                     <div className="full__actions">
                       <button
-                        className="btn btn--primary btn--sm full__btnSmall" // **
+                        className="btn btn--primary btn--sm full__btnSmall"
                         type="button"
                         onClick={handleSave}
                       >
@@ -237,7 +237,7 @@ function FullList({
                       </button>
 
                       <button
-                        className="btn btn--outline btn--sm full__btnSmall" // **
+                        className="btn btn--outline btn--sm full__btnSmall"
                         type="button"
                         onClick={() => requestDelete(row)}
                       >
@@ -245,7 +245,7 @@ function FullList({
                       </button>
 
                       <button
-                        className="btn btn--outline btn--sm full__btnSmall" // **
+                        className="btn btn--outline btn--sm full__btnSmall"
                         type="button"
                         onClick={handleCancel}
                       >
@@ -254,7 +254,7 @@ function FullList({
                     </div>
                   ) : (
                     <button
-                      className="btn btn--outline btn--sm full__btnSmall" // **
+                      className="btn btn--outline btn--sm full__btnSmall"
                       type="button"
                       onClick={() => setEditingId(row.id)}
                     >

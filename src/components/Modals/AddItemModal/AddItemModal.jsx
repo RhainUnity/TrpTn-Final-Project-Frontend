@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { fetchBlsSeries } from "../../../utils/blsApi";
 import { resolveSeriesId } from "../../../utils/blsSeriesMap";
+import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import "./AddItemModal.css";
 
 function AddItemModal({ isOpen, onClose, onSubmit, store }) {
@@ -148,197 +149,188 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
     });
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="addmodal" onMouseDown={onClose} role="presentation">
-      <div
-        className="addmodal__content"
-        onMouseDown={(e) => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Add Item"
-      >
-        <button
-          type="button"
-          className="addmodal__close"
-          onClick={onClose}
-          aria-label="Close"
+    <ModalWithForm
+      title="Add Item"
+      isOpen={isOpen}
+      onClose={onClose}
+      onSubmit={handleSubmit}
+    >
+      <label className="addmodal__label">
+        Item Name
+        <input
+          className="addmodal__input"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="e.g., milk"
+          required
+        />
+      </label>
+
+      <label className="addmodal__label">
+        Item Price
+        <input
+          className="addmodal__input"
+          type="number"
+          step="0.01"
+          min="0"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          placeholder="e.g., 4.10"
+          required
+        />
+      </label>
+
+      <label className="addmodal__label">
+        Unit
+        <select
+          className="addmodal__input"
+          value={unit}
+          onChange={(e) => setUnit(e.target.value)}
         >
-          ×
-        </button>
+          <option value="each">each</option>
+          <option value="per lb">per lb</option>
+          <option value="per oz">per oz</option>
+          <option value="per gal">per gal</option>
+          <option value="per qt">per qt</option>
+          <option value="per dozen">per dozen</option>
+        </select>
+      </label>
 
-        <form className="addmodal__form" onSubmit={handleSubmit}>
+      {/* needs to be dropdown */}
+      <label className="addmodal__label">
+        Item Priority
+        <select
+          className="addmodal__input"
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+        >
+          <option value="Essential">Essential</option>
+          <option value="Surplus">Surplus</option>
+          <option value="Optional">Optional</option>
+        </select>
+      </label>
+
+      <label className="addmodal__label">
+        Item Category
+        <select
+          className="addmodal__input"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="Pantry">Pantry</option>
+          <option value="Dairy">Dairy</option>
+          <option value="Meat">Meat</option>
+        </select>
+      </label>
+
+      {/* Button to open lookup form */}
+      <label className="addmodal__label">
+        Store
+        <select className="addmodal__input" value={store} disabled>
+          <option value="WinCo">WinCo</option>
+          <option value="Safeway">Safeway</option>
+          <option value="Albertson’s">Albertson’s</option>
+        </select>
+      </label>
+
+      <button
+        type="button"
+        className="btn btn--outline addmodal__secondary"
+        onClick={() => setIsLookupOpen((v) => !v)}
+      >
+        {isLookupOpen ? "Close Price Lookup" : "Lookup Price (API)"}
+      </button>
+
+      {isLookupOpen && (
+        <div className="addmodal__lookup">
+          <p className="addmodal__lookup-title">Price Lookup</p>
+
           <label className="addmodal__label">
-            Item Name
+            Search Item
             <input
               className="addmodal__input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder=""
-              required
+              value={lookupQuery}
+              onChange={(e) => setLookupQuery(e.target.value)}
+              placeholder="e.g., milk, banana, eggs, rice"
             />
           </label>
-          <label className="addmodal__label">
-            Item Price
+
+          {/* --ZIP CODE FIELD (optional for later geo-based lookup): */}
+          {/* <label className="addmodal__label">
+            ZIP Code
             <input
               className="addmodal__input"
-              type="number"
-              step="0.01"
-              min="0"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder=""
-              required
+              value={lookupZip}
+              onChange={(e) => setLookupZip(e.target.value)}
+              placeholder="optional"
             />
-          </label>
-          <label className="addmodal__label">
-            Unit
-            <select
-              className="addmodal__input"
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
+          </label> */}
+
+          {/* LOOkUP FORM with API integration: */}
+          <div className="addmodal__lookup-actions">
+            <button
+              type="button"
+              className="btn btn--outline btn--sm addmodal__lookup-btn"
+              onClick={handleLookupSearch}
+              disabled={!lookupQuery.trim() || lookupStatus === "loading"}
             >
-              <option value="each">each</option>
-              <option value="per lb">per lb</option>
-              <option value="per oz">per oz</option>
-              <option value="per gal">per gal</option>
-              <option value="per qt">per qt</option>
-              <option value="per dozen">per dozen</option>
-            </select>
-          </label>
+              {lookupStatus === "loading" ? "Searching..." : "Search"}
+            </button>
 
-          {/* needs to be dropdown */}
-          <label className="addmodal__label">
-            Item Priority
-            <select
-              className="addmodal__input"
-              value={priority}
-              onChange={(e) => setPriority(e.target.value)}
+            {/* USE PRICE FROM LOOKUP BUTTON */}
+            <button
+              type="button"
+              className="btn btn--primary btn--sm addmodal__lookup-btn addmodal__lookup-btn_use-price"
+              onClick={handleUseLookupPrice}
+              disabled={!lookupResult}
             >
-              <option value="Essential">Essential</option>
-              <option value="Surplus">Surplus</option>
-              <option value="Optional">Optional</option>
-            </select>
-          </label>
-          <label className="addmodal__label">
-            Item Category
-            <select
-              className="addmodal__input"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="Pantry">Pantry</option>
-              <option value="Dairy">Dairy</option>
-              <option value="Meat">Meat</option>
-            </select>
-          </label>
+              Use Price
+            </button>
+          </div>
 
-          {/* Button to open lookup form */}
-          <label className="addmodal__label">
-            Store
-            <select className="addmodal__input" value={store} disabled>
-              <option value="WinCo">WinCo</option>
-              <option value="Safeway">Safeway</option>
-              <option value="Albertson’s">Albertson’s</option>
-            </select>
-          </label>
-          <button
-            type="button"
-            className="addmodal__secondary"
-            onClick={() => setIsLookupOpen((v) => !v)}
-          >
-            {isLookupOpen ? "Close Price Lookup" : "Lookup Price (API)"}
-          </button>
-          {isLookupOpen && (
-            <div className="addmodal__lookup">
-              <p className="addmodal__lookup-title">Price Lookup</p>
+          {/* LOOKUP RESULTS: */}
+          <div className="addmodal__lookup-results">
+            {lookupStatus === "error" && (
+              <p className="addmodal__error">{lookupError}</p>
+            )}
 
-              <label className="addmodal__label">
-                Search Item
-                <input
-                  className="addmodal__input"
-                  value={lookupQuery}
-                  onChange={(e) => setLookupQuery(e.target.value)}
-                  placeholder="e.g., milk, banana, eggs, rice"
-                />
-              </label>
+            {lookupStatus === "idle" && (
+              <p className="addmodal__hint">
+                Try: <strong>banana</strong>, <strong>milk</strong>,{" "}
+                <strong>eggs</strong>, <strong>rice</strong>. (More items soon.)
+              </p>
+            )}
 
-              {/* --ZIP CODE FIELD (optional for later geo-based lookup): */}
-              {/* <label className="addmodal__label">
-                ZIP Code
-                <input
-                  className="addmodal__input"
-                  value={lookupZip}
-                  onChange={(e) => setLookupZip(e.target.value)}
-                  placeholder="optional"
-                />
-              </label> */}
-
-              {/* LOOkUP FORM with API integration: */}
-              <div className="addmodal__lookup-actions">
-                <button
-                  type="button"
-                  className="addmodal__lookup-btn"
-                  onClick={handleLookupSearch}
-                  disabled={!lookupQuery.trim() || lookupStatus === "loading"}
-                >
-                  {lookupStatus === "loading" ? "Searching..." : "Search"}
-                </button>
-
-                {/* USE PRICE FROM LOOKUP BUTTON */}
-                <button
-                  type="button"
-                  className="addmodal__lookup-btn addmodal__lookup-btn_use-price"
-                  onClick={handleUseLookupPrice}
-                  disabled={!lookupResult}
-                >
-                  Use Price
-                </button>
+            {lookupResult && (
+              <div className="addmodal__resultCard">
+                <p className="addmodal__resultTitle">
+                  Match: <strong>{lookupResult.matchedKey}</strong>
+                </p>
+                <p>
+                  Avg price:{" "}
+                  <strong>
+                    ${lookupResult.price.toFixed(2)}{" "}
+                    {lookupResult.unit ? `(${lookupResult.unit})` : ""}
+                  </strong>
+                </p>
+                <p className="addmodal__resultMeta">
+                  Source: BLS Average Price ({lookupResult.periodName}{" "}
+                  {lookupResult.year})
+                </p>
               </div>
+            )}
+          </div>
+          {/* END Lookup Form */}
+        </div>
+      )}
 
-              {/* LOOKUP RESULTS: */}
-              <div className="addmodal__lookup-results">
-                {lookupStatus === "error" && (
-                  <p className="addmodal__error">{lookupError}</p>
-                )}
-
-                {lookupStatus === "idle" && (
-                  <p className="addmodal__hint">
-                    Try: <strong>banana</strong>, <strong>milk</strong>,{" "}
-                    <strong>eggs</strong>, <strong>rice</strong>. (More items
-                    soon.)
-                  </p>
-                )}
-
-                {lookupResult && (
-                  <div className="addmodal__resultCard">
-                    <p className="addmodal__resultTitle">
-                      Match: <strong>{lookupResult.matchedKey}</strong>
-                    </p>
-                    <p>
-                      Avg price:{" "}
-                      <strong>
-                        ${lookupResult.price.toFixed(2)}{" "}
-                        {lookupResult.unit ? `(${lookupResult.unit})` : ""}
-                      </strong>
-                    </p>
-                    <p className="addmodal__resultMeta">
-                      Source: BLS Average Price ({lookupResult.periodName}{" "}
-                      {lookupResult.year})
-                    </p>
-                  </div>
-                )}
-              </div>
-              {/* END Lookup Form */}
-            </div>
-          )}
-          <button className="addmodal__submit" type="submit">
-            Submit
-          </button>
-        </form>
-      </div>
-    </div>
+      <button className="btn btn--primary addmodal__submit" type="submit">
+        {" "}
+        {/* ** */}
+        Submit
+      </button>
+    </ModalWithForm>
   );
 }
 

@@ -47,12 +47,16 @@ export default function ConfirmDeleteModal({
         </p>
 
         <div className="confirmModal__actions">
-          <button type="button" className="confirmModal__btn" onClick={onClose}>
+          <button
+            type="button"
+            className="btn btn--outline btn--sm confirmModal__btn"
+            onClick={onClose}
+          >
             Cancel
           </button>
           <button
             type="button"
-            className="confirmModal__btn confirmModal__btn_danger"
+            className="btn btn--primary btn--sm confirmModal__btn confirmModal__btn_danger"
             onClick={onConfirm}
           >
             Delete

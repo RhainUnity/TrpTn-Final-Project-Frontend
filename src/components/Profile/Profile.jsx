@@ -69,12 +69,16 @@ function Profile({ isLoggedIn, user, itemCount, onUpdateAvatar }) {
         </label>
 
         <div className="profile__actions">
-          <button className="profile__btn" type="button" onClick={handleSave}>
+          <button
+            className="profile__btn btn btn--primary btn--sm"
+            type="button"
+            onClick={handleSave}
+          >
             Save Avatar
           </button>
 
           <button
-            className="profile__btn profile__btn--secondary"
+            className="profile__btn btn btn--outline btn--sm"
             type="button"
             onClick={handleReset}
           >

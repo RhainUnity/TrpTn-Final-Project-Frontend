@@ -1,8 +1,14 @@
+/* src/components/Profile/Profile.css */
+
 .profile__card {
   display: flex;
   gap: 16px;
   align-items: center;
   margin: 16px 0;
+  padding: 12px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
 }
 
 .profile__avatar {
@@ -10,6 +16,8 @@
   height: 96px;
   border-radius: 999px;
   object-fit: cover;
+  border: 2px solid var(--color-border);
+  background: var(--color-bg-page);
 }
 
 .profile__editor {
@@ -20,16 +28,54 @@
 .profile__label {
   display: grid;
   gap: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
 }
 
 .profile__input {
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  height: 44px;
+  padding: 0 12px;
+  border-radius: var(--radius-input);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  color: var(--color-text);
+  font-size: 16px;
+}
+
+.profile__input:focus {
+  border-color: var(--color-primary);
 }
 
 .profile__actions {
   display: flex;
   gap: 10px;
   margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.profile__btn {
+  border: none;
+  background: none;
+  color: inherit;
+  box-shadow: none;
+}
+
+/* ---------- Mobile: <= 520px ---------- */
+@media (max-width: 520px) {
+  .profile__card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile__actions {
+    gap: 8px;
+  }
+
+  /* make buttons easier to tap on mobile */ /* ** */
+  .profile__btn.btn--sm {
+    height: 44px;
+    padding: 0 14px;
+    font-size: 14px;
+  }
 }

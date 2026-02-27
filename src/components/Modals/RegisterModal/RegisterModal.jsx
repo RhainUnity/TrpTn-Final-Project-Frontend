@@ -6,29 +6,13 @@ import { fileToDataUrl } from "../../../utils/dataURL";
 
 function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
   const [avatarDataUrl, setAvatarDataUrl] = useState("");
-
-  // ----------------------------------------------------------------------
-  /* ------------  Option to use Url for preview instead of dataUrl  ------------ */
-  // const [avatarPreview, setAvatarPreview] = useState("");
-
-  // useEffect(() => {
-  //   if (!avatarFile) {
-  //     setAvatarPreview("");
-  //     return;
-  //   }
-
-  //   const url = URL.createObjectURL(avatarFile);
-  //   setAvatarPreview(url);
-
-  //   return () => URL.revokeObjectURL(url);
-  // }, [avatarFile]);
-  /* ------------  Option to use Url for preview instead of dataUrl  ------------ */
-  // ------------------------------------------------------------------------
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = () => {
-    // no real auth yet — just pass avatar up
     onRegister?.({
       avatarUrl: avatarDataUrl || null,
+      email: email.trim() || null,
     });
   };
 
@@ -39,9 +23,8 @@ function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
       return;
     }
 
-    // image guardrails
     if (!file.type.startsWith("image/")) return;
-    if (file.size > 2 * 1024 * 1024) return; // 2MB
+    if (file.size > 2 * 1024 * 1024) return;
 
     const dataUrl = await fileToDataUrl(file);
     setAvatarDataUrl(dataUrl);
@@ -51,12 +34,27 @@ function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
     <ModalWithForm title="Sign Up" isOpen={isOpen} onClose={onClose}>
       <label className="auth__label">
         Email
-        <input className="auth__input" type="email" placeholder="Email" />
+        <input
+          className="auth__input"
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
       </label>
 
       <label className="auth__label">
         Password
-        <input className="auth__input" type="password" placeholder="Password" />
+        <input
+          className="auth__input"
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          minLength={6}
+        />
       </label>
 
       {/* Avatar upload */}
@@ -80,11 +78,20 @@ function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
         </div>
       )}
 
-      <button className="auth__submit" type="button" onClick={handleSubmit}>
+      <button
+        className="auth__submit btn btn--primary"
+        type="button"
+        onClick={handleSubmit}
+        disabled={!email.trim() || !password.trim()}
+      >
         Create Account (later)
       </button>
 
-      <button className="auth__link" type="button" onClick={onOpenLogin}>
+      <button
+        className="auth__link btn btn--outline btn--sm"
+        type="button"
+        onClick={onOpenLogin}
+      >
         or Sign In
       </button>
     </ModalWithForm>

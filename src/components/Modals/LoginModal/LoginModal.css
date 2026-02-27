@@ -22,7 +22,6 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: none;
   justify-self: start;
 }
-

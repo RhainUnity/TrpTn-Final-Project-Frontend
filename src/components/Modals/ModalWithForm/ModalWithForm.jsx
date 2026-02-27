@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import "./ModalWithForm.css";
 
-function ModalWithForm({ title, isOpen, onClose, children }) {
+function ModalWithForm({ title, isOpen, onClose, children, onSubmit }) {
   useEffect(() => {
     if (!isOpen) return;
 
@@ -24,7 +24,11 @@ function ModalWithForm({ title, isOpen, onClose, children }) {
           ✕
         </button>
         <h2 className="modal__title">{title}</h2>
-        <form className="modal__form">{children}</form>
+
+        <form className="modal__form" onSubmit={onSubmit}>
+          {" "}
+          {children}
+        </form>
       </div>
     </div>
   );
