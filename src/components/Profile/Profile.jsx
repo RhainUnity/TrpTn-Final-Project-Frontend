@@ -60,12 +60,23 @@ function Profile({ isLoggedIn, user, itemCount, onUpdateAvatar }) {
       <div className="profile__editor">
         <label className="profile__label">
           Upload Avatar
-          <input
-            className="profile__input"
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
+          <div className="profile__file">
+            {" "}
+            <input
+              id="profileAvatar"
+              className="profile__file-input"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            <label
+              htmlFor="profileAvatar"
+              className="profile__file-btn btn btn--outline btn--sm"
+            >
+              Choose File
+            </label>
+            <span className="profile__file-name"> No file chosen</span>
+          </div>
         </label>
 
         <div className="profile__actions">

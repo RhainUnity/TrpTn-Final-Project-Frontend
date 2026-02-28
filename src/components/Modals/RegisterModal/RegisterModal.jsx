@@ -60,12 +60,24 @@ function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
       {/* Avatar upload */}
       <label className="auth__label">
         Avatar (optional)
-        <input
-          className="auth__input"
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-        />
+        <div className="auth__file">
+          <input
+            id="registerAvatar"
+            className="auth__file-input"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+
+          <label
+            htmlFor="registerAvatar"
+            className="auth__file-btn btn btn--outline btn--sm"
+          >
+            Choose File
+          </label>
+
+          <span className="auth__file-name">No file chosen</span>
+        </div>
       </label>
 
       {avatarDataUrl && (

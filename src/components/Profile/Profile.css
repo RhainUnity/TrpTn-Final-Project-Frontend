@@ -61,6 +61,33 @@
   box-shadow: none;
 }
 
+/* File input: custom button */
+.profile__file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* hide the native file control */
+.profile__file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* optional: make file name muted and aligned */
+.profile__file-name {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
 /* ---------- Mobile: <= 520px ---------- */
 @media (max-width: 520px) {
   .profile__card {
