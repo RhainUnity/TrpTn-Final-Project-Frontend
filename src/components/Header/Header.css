@@ -42,6 +42,10 @@
   text-decoration: none;
 }
 
+.header__cart-label.btn.btn--outline.btn--sm {
+  cursor: default;
+}
+
 /* Right nav */
 .header__nav {
   display: flex;
@@ -124,5 +128,23 @@
 
   .header__email {
     display: none;
+  }
+}
+
+/* make cart button smaller on smaller screens */
+@media (max-width: 720px) {
+  .header__cart-button.btn.btn--outline {
+    font-size: 12px;
+    padding: 9px;
+    max-height: fit-content;
+  }
+}
+
+/* make cart button smaller on smaller screens */
+@media (max-width: 990px) {
+  .header__cart-button.btn.btn--outline {
+    font-size: 14px;
+    padding: 9px;
+    max-height: fit-content;
   }
 }

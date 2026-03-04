@@ -20,7 +20,7 @@ function Header({ isLoggedIn, email, avatarUrl, onOpenLogin, onSignOut }) {
       <div className="header__center">
         {isCartPage && (
           <span className="header__cart-label btn btn--outline btn--sm">
-            Your Cart
+            My Cart
           </span>
         )}
 
