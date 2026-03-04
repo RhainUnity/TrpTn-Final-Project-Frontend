@@ -1,6 +1,6 @@
 // src/components/Modals/AddItemModal/AddItemModal.jsx
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import PriceLookupModal from "../PriceLookupModal/PriceLookupModal";
 import "./AddItemModal.css";
@@ -14,16 +14,20 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
 
   const [isLookupOpen, setIsLookupOpen] = useState(false);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    // reset each time it opens
+  const resetForm = () => {
+    // ** reset only when closing/submitting
     setName("");
     setPrice("");
     setCategory("");
     setPriority("Essential");
     setUnit("each");
     setIsLookupOpen(false);
-  }, [isOpen]);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
 
   const formatPriceForInput = (n) => {
     const num = Number(n);
@@ -70,7 +74,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
       <ModalWithForm
         title="Add Item"
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleClose}
         onSubmit={handleSubmit}
       >
         <label className="addmodal__label">
