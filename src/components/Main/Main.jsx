@@ -13,10 +13,17 @@ function Main({
   const [filterCategory, setFilterCategory] = useState("All");
   const [filterPriority, setFilterPriority] = useState("All");
 
+  // item variables to be implemented from backend later
+
+  const visibleItems = items.filter((i) => !i.hidden);
+
   const total = useMemo(
     () =>
-      items.reduce((sum, item) => sum + (item.price ?? 0) * (item.qty ?? 0), 0),
-    [items],
+      visibleItems.reduce(
+        (sum, item) => sum + (item.price ?? 0) * (item.qty ?? 0),
+        0,
+      ),
+    [visibleItems],
   );
 
   const handleInc = (id) => {
@@ -36,10 +43,6 @@ function Main({
       ),
     );
   };
-
-  // item variables to be implemented from backend later
-
-  const visibleItems = items.filter((i) => !i.hidden);
 
   const matchesCategory = (i) =>
     filterCategory === "All" ||
