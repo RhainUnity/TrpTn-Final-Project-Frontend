@@ -49,7 +49,7 @@ function FullList({
   };
 
   const requestDelete = (row) => {
-    setDeleteItem(row); // open modal
+    setDeleteItem(row);
   };
 
   const closeDeleteModal = () => setDeleteItem(null);

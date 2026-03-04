@@ -21,7 +21,7 @@
   flex-wrap: wrap;
 }
 
-/* hide native file input UI */
+/* hide default styling so matches rest of UI */
 .auth__file-input {
   position: absolute;
   width: 1px;

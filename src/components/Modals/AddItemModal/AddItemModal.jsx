@@ -62,7 +62,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
       priority: priority || "Essential",
     });
 
-    onClose(); //
+    onClose();
   };
 
   return (

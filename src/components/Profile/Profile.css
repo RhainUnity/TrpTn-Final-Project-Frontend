@@ -82,7 +82,7 @@
   border: 0;
 }
 
-/* optional: make file name muted and aligned */
+/* make file name muted and aligned */
 .profile__file-name {
   font-size: 14px;
   color: var(--color-text-muted);
@@ -99,7 +99,7 @@
     gap: 8px;
   }
 
-  /* make buttons easier to tap on mobile */ /* ** */
+  /* make buttons easier to tap on mobile */
   .profile__btn.btn--sm {
     height: 44px;
     padding: 0 14px;
