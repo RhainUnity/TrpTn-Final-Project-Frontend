@@ -1,9 +1,11 @@
 /* index.css */
 
+@import "./vendor/fonts/fonts.css";
+
 :root {
   /* Colors */
   --color-primary: #2f71e5;
-  --color-primary-disabled: #8cac E5; /* adjust if needed */
+  --color-primary-disabled: #8cace5;
   --color-text: #000000;
   --color-text-muted: #8b8b8b;
   --color-border: #cfcfcf;
