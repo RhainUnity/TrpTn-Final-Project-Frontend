@@ -105,12 +105,12 @@ function FullList({
         </div>
 
         {/* Items Info */}
-        <div className="full__body">
+        <ul className="full__body">
           {items.map((row) => {
             const isEditing = row.id === editingId;
 
             return (
-              <div key={row.id} className="full__row">
+              <li key={row.id} className="full__row">
                 {/* Top item/specs grid */}
                 <div className="full__row-main">
                   {/* Item name */}
@@ -262,10 +262,10 @@ function FullList({
                     </button>
                   )}
                 </div>
-              </div>
+              </li>
             );
           })}
-        </div>
+        </ul>
 
         <div className="full__spacer" />
       </div>

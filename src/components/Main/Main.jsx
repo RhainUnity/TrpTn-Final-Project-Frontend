@@ -144,9 +144,9 @@ function Main({
         {filteredItems.length === 0 ? (
           <p className="main__empty">No items match your filters.</p>
         ) : (
-          <div className="main__list">
+          <ul className="main__list">
             {filteredItems.map((row) => (
-              <div key={row.id} className="main__row">
+              <li key={row.id} className="main__row">
                 <div className="main__row-left">
                   <span className="main__item-name">{row.item}</span>
                   <span className="main__unit">{getUnitLabel(row.unit)}</span>
@@ -194,9 +194,9 @@ function Main({
                     ${((row.price ?? 0) * (row.qty ?? 0)).toFixed(2)}
                   </span>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
 
         <p className="main__totalline">
