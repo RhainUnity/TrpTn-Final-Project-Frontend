@@ -1,4 +1,4 @@
-// routes/index.js - Main Express router
+// index.js - Main API router
 
 const router = require("express").Router();
 const userRoutes = require("./users");
