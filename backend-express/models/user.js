@@ -1,4 +1,4 @@
-// user.js - Mongoose model for users
+// models/user.js - Mongoose model for users
 
 const mongoose = require("mongoose");
 const validator = require("validator");
