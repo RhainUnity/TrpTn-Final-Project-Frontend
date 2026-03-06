@@ -1,0 +1,79 @@
+// controllers/items.js - Controllers for shopping items
+
+const mongoose = require("mongoose");
+const Item = require("../models/item");
+const { CREATED } = require("../utils/constants");
+const {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} = require("../utils/errors");
+
+const getItems = (req, res, next) => {
+  Item.find({ owner: req.user._id })
+    .then((items) => {
+      res.send(items);
+    })
+    .catch(next);
+};
+
+const createItem = (req, res, next) => {
+  const { item, price, unit, category, priority, qty, hidden } = req.body;
+
+  Item.create({
+    item,
+    price,
+    unit,
+    category,
+    priority,
+    qty,
+    hidden,
+    owner: req.user._id,
+  })
+    .then((createdItem) => {
+      res.status(CREATED).send(createdItem);
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        next(new BadRequestError("Invalid item data"));
+        return;
+      }
+
+      next(err);
+    });
+};
+
+const deleteItem = (req, res, next) => {
+  const { itemId } = req.params;
+
+  Item.findById(itemId)
+    .then((item) => {
+      if (!item) {
+        next(new NotFoundError("Item not found"));
+        return null;
+      }
+
+      if (item.owner.toString() !== req.user._id) {
+        next(new ForbiddenError("You cannot delete another user's item"));
+        return null;
+      }
+
+      return Item.findByIdAndDelete(itemId).then(() => {
+        res.send(item);
+      });
+    })
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        next(new BadRequestError("Invalid item id"));
+        return;
+      }
+
+      next(err);
+    });
+};
+
+module.exports = {
+  getItems,
+  createItem,
+  deleteItem,
+};
