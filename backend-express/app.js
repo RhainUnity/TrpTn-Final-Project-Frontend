@@ -13,9 +13,8 @@ const errorHandler = require("./middlewares/error-handler");
 const { DEFAULT_PORT } = require("./utils/constants");
 const { MONGO_URL } = require("./utils/config");
 
-const { PORT = DEFAULT_PORT } = process.env;
-
 const app = express();
+const PORT = process.env.PORT || DEFAULT_PORT;
 
 app.use(cors());
 app.use(express.json());

@@ -9,6 +9,7 @@ const {
   BadRequestError,
   ConflictError,
   UnauthorizedError,
+  NotFoundError,
 } = require("../utils/errors");
 
 const SALT_ROUNDS = 10;
@@ -68,7 +69,25 @@ const login = (req, res, next) => {
     });
 };
 
+const getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        next(new NotFoundError("User not found"));
+        return;
+      }
+
+      res.send({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+      });
+    })
+    .catch(next);
+};
+
 module.exports = {
   createUser,
   login,
+  getCurrentUser,
 };
