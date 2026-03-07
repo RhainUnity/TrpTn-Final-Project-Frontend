@@ -17,6 +17,8 @@ module.exports = [
     },
     rules: {
       "no-underscore-dangle": ["error", { allow: ["_id"] }],
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "no-console": "off",
     },
   },
 ];
