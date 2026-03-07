@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const { JWT_SECRET } = require("../utils/config");
-const { CREATED } = require("../utils/constants");
+const { CREATED, ERROR_MESSAGES } = require("../utils/constants");
 const {
   BadRequestError,
   ConflictError,
@@ -35,12 +35,12 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        next(new BadRequestError("Invalid user data"));
+        next(new BadRequestError(ERROR_MESSAGES.INVALID_USER_DATA));
         return;
       }
 
       if (err.code === 11000) {
-        next(new ConflictError("A user with that email already exists"));
+        next(new ConflictError(ERROR_MESSAGES.USER_ALREADY_EXISTS));
         return;
       }
 
@@ -60,8 +60,8 @@ const login = (req, res, next) => {
       res.send({ token });
     })
     .catch((err) => {
-      if (err.message === "Incorrect email or password") {
-        next(new UnauthorizedError("Incorrect email or password"));
+      if (err.message === ERROR_MESSAGES.INCORRECT_AUTH) {
+        next(new UnauthorizedError(ERROR_MESSAGES.INCORRECT_AUTH));
         return;
       }
 
@@ -73,7 +73,7 @@ const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        next(new NotFoundError("User not found"));
+        next(new NotFoundError(ERROR_MESSAGES.USER_NOT_FOUND));
         return;
       }
 

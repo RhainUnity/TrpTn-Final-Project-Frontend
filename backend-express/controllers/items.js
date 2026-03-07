@@ -2,7 +2,7 @@
 
 const mongoose = require("mongoose");
 const Item = require("../models/item");
-const { CREATED } = require("../utils/constants");
+const { CREATED, ERROR_MESSAGES } = require("../utils/constants");
 const {
   BadRequestError,
   ForbiddenError,
@@ -35,7 +35,7 @@ const createItem = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
-        next(new BadRequestError("Invalid item data"));
+        next(new BadRequestError(ERROR_MESSAGES.INVALID_ITEM_DATA));
         return;
       }
 
@@ -49,12 +49,12 @@ const deleteItem = (req, res, next) => {
   Item.findById(itemId)
     .then((item) => {
       if (!item) {
-        next(new NotFoundError("Item not found"));
+        next(new NotFoundError(ERROR_MESSAGES.ITEM_NOT_FOUND));
         return null;
       }
 
       if (item.owner.toString() !== req.user._id) {
-        next(new ForbiddenError("You cannot delete another user's item"));
+        next(new ForbiddenError(ERROR_MESSAGES.FORBIDDEN_DELETE));
         return null;
       }
 
@@ -64,7 +64,7 @@ const deleteItem = (req, res, next) => {
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
-        next(new BadRequestError("Invalid item id"));
+        next(new BadRequestError(ERROR_MESSAGES.INVALID_ITEM_ID));
         return;
       }
 
