@@ -3,7 +3,7 @@
 const { isCelebrateError } = require("celebrate");
 const { ERROR_MESSAGES } = require("../utils/constants");
 
-function errorHandler(err, req, res, next) {
+function errorHandler(err, req, res) {
   if (isCelebrateError(err)) {
     res.status(400).send({
       message: "Validation failed",
