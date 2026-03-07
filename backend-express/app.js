@@ -12,11 +12,19 @@ const { requestLogger, errorLogger } = require("./middlewares/logger");
 const errorHandler = require("./middlewares/error-handler");
 const { DEFAULT_PORT } = require("./utils/constants");
 const { MONGO_URL } = require("./utils/config");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 const app = express();
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP
+});
 const PORT = process.env.PORT || DEFAULT_PORT;
 
 app.use(cors());
+app.use(helmet());
+app.use(limiter);
 app.use(express.json());
 app.use(requestLogger);
 
