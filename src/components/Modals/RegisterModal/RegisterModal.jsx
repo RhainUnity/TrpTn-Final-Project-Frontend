@@ -4,15 +4,24 @@ import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import "./RegisterModal.css";
 import { fileToDataUrl } from "../../../utils/dataURL";
 
-function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
+function RegisterModal({
+  isOpen,
+  onClose,
+  onOpenLogin,
+  onRegister,
+  authError,
+}) {
   const [avatarDataUrl, setAvatarDataUrl] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = () => {
     onRegister?.({
+      name: name.trim(),
+      email: email.trim(),
+      password,
       avatarUrl: avatarDataUrl || null,
-      email: email.trim() || null,
     });
   };
 
@@ -32,6 +41,18 @@ function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
 
   return (
     <ModalWithForm title="Sign Up" isOpen={isOpen} onClose={onClose}>
+      <label className="auth__label">
+        Name
+        <input
+          className="auth__input"
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </label>
+
       <label className="auth__label">
         Email
         <input
@@ -76,7 +97,9 @@ function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
             Choose File
           </label>
 
-          <span className="auth__file-name">No file chosen</span>
+          <span className="auth__file-name">
+            {avatarDataUrl ? "File chosen" : "No file chosen"}
+          </span>
         </div>
       </label>
 
@@ -90,13 +113,15 @@ function RegisterModal({ isOpen, onClose, onOpenLogin, onRegister }) {
         </div>
       )}
 
+      {authError && <div className="auth__error">{authError}</div>}
+
       <button
         className="auth__submit btn btn--primary"
         type="button"
         onClick={handleSubmit}
-        disabled={!email.trim() || !password.trim()}
+        disabled={!name.trim() || !email.trim() || !password.trim()}
       >
-        Create Account (later)
+        Create Account
       </button>
 
       <button
