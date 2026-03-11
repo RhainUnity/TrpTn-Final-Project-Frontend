@@ -3,9 +3,13 @@ import { useState } from "react";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import "./LoginModal.css";
 
-function LoginModal({ isOpen, onClose, onFakeLogin, onOpenRegister }) {
+function LoginModal({ isOpen, onClose, onLogin, onOpenRegister, authError }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const handleSubmit = () => {
+    onLogin({ email: email.trim(), password });
+  };
 
   return (
     <ModalWithForm title="Sign In" isOpen={isOpen} onClose={onClose}>
@@ -31,14 +35,12 @@ function LoginModal({ isOpen, onClose, onFakeLogin, onOpenRegister }) {
         />
       </label>
 
-      {/* Stage 1: local submitted fake login*/}
+      {authError && <div className="auth__error">{authError}</div>}
+
       <button
         className="auth__submit"
         type="button"
-        onClick={() => {
-          onFakeLogin(email, password);
-          onClose();
-        }}
+        onClick={handleSubmit}
         disabled={!email.trim() || !password.trim()}
       >
         Sign In

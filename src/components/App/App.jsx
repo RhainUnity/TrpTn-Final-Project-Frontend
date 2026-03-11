@@ -1,10 +1,10 @@
 // src/components/App/App.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 
 import { signup, signin, checkToken } from "../../utils/auth";
-import { readJSON, writeJSON, remove } from "../../utils/storage";
+import { getItems, createItem, deleteItem } from "../../utils/api";
 
 import Header from "../Header/Header";
 import Main from "../Main/Main";
@@ -19,65 +19,41 @@ import RegisterModal from "../Modals/RegisterModal/RegisterModal";
 function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [authError, setAuthError] = useState("");
+  const [items, setItems] = useState([]);
+  const [itemsError, setItemsError] = useState("");
+  const [isItemsLoading, setIsItemsLoading] = useState(false);
 
   const STORE_TABS = ["WinCo", "Safeway", "Albertson’s"];
   const [activeStore, setActiveStore] = useState("Safeway");
-
-  const [userItems, setUserItems] = useState(() => {
-    const stored = readJSON("userItems", {});
-    const userKey = readJSON("currentUser", null)?._id || "guest";
-
-    const existing = stored[userKey];
-    if (Array.isArray(existing)) {
-      return {
-        ...stored,
-        [userKey]: { Safeway: existing },
-      };
-    }
-
-    return stored;
-  });
 
   const isLoggedIn = Boolean(currentUser);
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
-  const userKey = currentUser?._id || "guest";
-  const storeLists = userItems[userKey] || {};
-  const items = storeLists[activeStore] || [];
+  const storeItems = useMemo(
+    () => items.filter((item) => (item.store || "Safeway") === activeStore),
+    [items, activeStore],
+  );
 
-  const setItemsForUserStore = (store, updater) => {
-    setUserItems((prev) => {
-      const userData = prev[userKey] || {};
-      const currentStoreItems = userData[store] || [];
-      const nextStoreItems =
-        typeof updater === "function" ? updater(currentStoreItems) : updater;
+  const loadItems = () => {
+    const token = localStorage.getItem("jwt");
+    if (!token) return Promise.resolve();
 
-      return {
-        ...prev,
-        [userKey]: {
-          ...userData,
-          [store]: nextStoreItems,
-        },
-      };
-    });
+    setIsItemsLoading(true);
+    setItemsError("");
+
+    return getItems()
+      .then((itemsData) => {
+        setItems(itemsData);
+      })
+      .catch((err) => {
+        setItemsError(err.message || "Failed to load items");
+      })
+      .finally(() => {
+        setIsItemsLoading(false);
+      });
   };
-
-  const setItemsForActiveStore = (updater) =>
-    setItemsForUserStore(activeStore, updater);
-
-  useEffect(() => {
-    if (currentUser) {
-      writeJSON("currentUser", currentUser);
-    } else {
-      remove("currentUser");
-    }
-  }, [currentUser]);
-
-  useEffect(() => {
-    writeJSON("userItems", userItems);
-  }, [userItems]);
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
@@ -86,10 +62,15 @@ function App() {
     checkToken(token)
       .then((userData) => {
         setCurrentUser(userData);
+        return getItems();
+      })
+      .then((itemsData) => {
+        setItems(itemsData);
       })
       .catch(() => {
         localStorage.removeItem("jwt");
         setCurrentUser(null);
+        setItems([]);
       });
   }, []);
 
@@ -104,6 +85,7 @@ function App() {
       .then((userData) => {
         setCurrentUser(userData);
         closeAllModals();
+        return loadItems();
       })
       .catch((err) => {
         setAuthError(err.message || "Sign in failed");
@@ -122,11 +104,25 @@ function App() {
       .then((userData) => {
         setCurrentUser(userData);
         closeAllModals();
+        return loadItems();
       })
       .catch((err) => {
         setAuthError(err.message || "Registration failed");
       });
   };
+
+  const handleAddItem = (newItem) =>
+    createItem({
+      ...newItem,
+      store: activeStore,
+    }).then((createdItem) => {
+      setItems((prev) => [createdItem, ...prev]);
+    });
+
+  const handleDeleteItem = (itemId) =>
+    deleteItem(itemId).then(() => {
+      setItems((prev) => prev.filter((item) => item._id !== itemId));
+    });
 
   const handleSignOut = () => {
     localStorage.removeItem("jwt");
@@ -163,6 +159,9 @@ function App() {
       />
 
       <main className="page__content">
+        {itemsError && <p className="page__error">{itemsError}</p>}
+        {isItemsLoading && <p className="page__loading">Loading items...</p>}
+
         <Routes>
           <Route path="/about" element={<About />} />
 
@@ -186,8 +185,8 @@ function App() {
             path="/"
             element={
               <Main
-                items={items}
-                setItems={setItemsForActiveStore}
+                items={storeItems}
+                setItems={setItems}
                 activeStore={activeStore}
                 setActiveStore={setActiveStore}
                 stores={STORE_TABS}
@@ -199,11 +198,13 @@ function App() {
             path="/full-list"
             element={
               <FullList
-                items={items}
-                setItems={setItemsForActiveStore}
+                items={storeItems}
+                setItems={setItems}
                 activeStore={activeStore}
                 setActiveStore={setActiveStore}
                 stores={STORE_TABS}
+                onAddItem={handleAddItem}
+                onDeleteItem={handleDeleteItem}
               />
             }
           />

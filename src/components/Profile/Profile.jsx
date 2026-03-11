@@ -75,7 +75,6 @@ function Profile({ isLoggedIn, user, itemCount, onUpdateAvatar }) {
             >
               Choose File
             </label>
-            <span className="profile__file-name"> No file chosen</span>
           </div>
         </label>
 

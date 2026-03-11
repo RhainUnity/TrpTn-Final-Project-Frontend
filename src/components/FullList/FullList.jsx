@@ -11,40 +11,46 @@ function FullList({
   activeStore,
   setActiveStore,
   stores,
+  onAddItem,
+  onDeleteItem,
 }) {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [deleteItem, setDeleteItem] = useState(null);
-  // Stage 1
   const [editingId, setEditingId] = useState(null);
 
-  const handleAddItem = ({ item, price, unit, category, priority }) => {
-    setItems((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        item,
-        category,
-        priority,
-        price,
-        unit,
-        qty: 0,
-        hidden: false,
-      },
-    ]);
-    setIsAddOpen(false);
+  const handleAddItem = ({
+    item,
+    price,
+    unit,
+    category,
+    priority,
+    qty,
+    hidden,
+  }) => {
+    onAddItem({
+      item,
+      category,
+      priority,
+      price,
+      unit,
+      qty: qty ?? 0,
+      hidden: hidden ?? false,
+    }).then(() => {
+      setIsAddOpen(false);
+    });
   };
 
-  const handleChange = (id, patch) => {
-    setItems((prev) => prev.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+  const handleChange = (itemId, patch) => {
+    setItems((prev) =>
+      prev.map((row) => (row._id === itemId ? { ...row, ...patch } : row)),
+    );
   };
 
   const handleSave = () => {
-    // Later: persist to backend / state store
     setEditingId(null);
   };
 
   const handleCancel = () => {
-    // Later: revert changes (for now just stop editing)
     setEditingId(null);
   };
 
@@ -57,13 +63,11 @@ function FullList({
   const confirmDelete = () => {
     if (!deleteItem) return;
 
-    const id = deleteItem.id;
-    setItems((prev) => prev.filter((r) => r.id !== id));
-
-    // if you delete the row you’re editing, exit edit mode
-    if (editingId === id) setEditingId(null);
-
-    setDeleteItem(null);
+    const itemId = deleteItem._id;
+    onDeleteItem(itemId).then(() => {
+      if (editingId === itemId) setEditingId(null);
+      setDeleteItem(null);
+    });
   };
 
   // Store Tabs
@@ -75,7 +79,9 @@ function FullList({
             <button
               key={store}
               type="button"
-              className={`full__tab ${activeStore === store ? "full__tab_active" : ""} btn ${activeStore === store ? "btn--primary" : "btn--outline"}`} // **
+              className={`full__tab ${
+                activeStore === store ? "full__tab_active" : ""
+              } btn ${activeStore === store ? "btn--primary" : "btn--outline"}`}
               onClick={() => setActiveStore(store)}
             >
               {store}
@@ -107,7 +113,7 @@ function FullList({
         {/* Items Info */}
         <ul className="full__body">
           {items.map((row) => {
-            const isEditing = row.id === editingId;
+            const isEditing = row._id === editingId;
 
             return (
               <li key={row.id} className="full__row">
@@ -154,7 +160,7 @@ function FullList({
                         className="full__select"
                         value={row.priority}
                         onChange={(e) =>
-                          handleChange(row.id, { priority: e.target.value })
+                          handleChange(row._id, { priority: e.target.value })
                         }
                       >
                         <option value="Essential">Essential</option>
@@ -176,7 +182,7 @@ function FullList({
                           step="0.01"
                           value={row.price ?? 0}
                           onChange={(e) =>
-                            handleChange(row.id, {
+                            handleChange(row._id, {
                               price: Number(e.target.value),
                             })
                           }
@@ -186,7 +192,7 @@ function FullList({
                           className="full__select full__select_unit"
                           value={row.unit ?? "each"}
                           onChange={(e) =>
-                            handleChange(row.id, { unit: e.target.value })
+                            handleChange(row._id, { unit: e.target.value })
                           }
                         >
                           <option value="each">each</option>
@@ -220,7 +226,7 @@ function FullList({
                       type="checkbox"
                       checked={!!row.hidden}
                       onChange={(e) =>
-                        handleChange(row.id, { hidden: e.target.checked })
+                        handleChange(row._id, { hidden: e.target.checked })
                       }
                     />
                     <span className="full__hide-text">Hide</span>
@@ -256,7 +262,7 @@ function FullList({
                     <button
                       className="btn btn--outline btn--sm full__btnSmall"
                       type="button"
-                      onClick={() => setEditingId(row.id)}
+                      onClick={() => setEditingId(row._id)}
                     >
                       Edit
                     </button>

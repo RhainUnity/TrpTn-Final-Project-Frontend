@@ -96,10 +96,9 @@ function RegisterModal({
           >
             Choose File
           </label>
-
-          <span className="auth__file-name">
-            {avatarDataUrl ? "File chosen" : "No file chosen"}
-          </span>
+          {/* <span className="auth__file-name">
+            {selectedFileName || "No file chosen"}
+          </span> */}
         </div>
       </label>
 
