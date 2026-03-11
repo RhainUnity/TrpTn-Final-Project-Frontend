@@ -128,6 +128,7 @@ function App() {
     localStorage.removeItem("jwt");
     setCurrentUser(null);
     setActiveStore("Safeway");
+    setItems([]);
   };
 
   const closeAllModals = () => {

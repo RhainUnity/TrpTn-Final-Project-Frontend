@@ -26,6 +26,7 @@ const validateCreateItem = celebrate({
     priority: Joi.string().required().valid("Essential", "Surplus", "Optional"),
     qty: Joi.number().min(0),
     hidden: Joi.boolean(),
+    store: Joi.string().valid("WinCo", "Safeway", "Albertson’s").required(),
   }),
 });
 

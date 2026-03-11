@@ -43,6 +43,12 @@ const itemSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    store: {
+      type: String,
+      required: true,
+      enum: ["WinCo", "Safeway", "Albertson’s"],
+      default: "Safeway",
+    },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",

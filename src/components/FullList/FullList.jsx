@@ -35,6 +35,7 @@ function FullList({
       unit,
       qty: qty ?? 0,
       hidden: hidden ?? false,
+      // store: activeStore,  /// REMOVE THIS
     }).then(() => {
       setIsAddOpen(false);
     });
@@ -116,7 +117,7 @@ function FullList({
             const isEditing = row._id === editingId;
 
             return (
-              <li key={row.id} className="full__row">
+              <li key={row._id} className="full__row">
                 {/* Top item/specs grid */}
                 <div className="full__row-main">
                   {/* Item name */}
@@ -126,7 +127,7 @@ function FullList({
                         className="full__input"
                         value={row.item}
                         onChange={(e) =>
-                          handleChange(row.id, { item: e.target.value })
+                          handleChange(row._id, { item: e.target.value })
                         }
                       />
                     ) : (
@@ -141,7 +142,7 @@ function FullList({
                         className="full__select"
                         value={row.category}
                         onChange={(e) =>
-                          handleChange(row.id, { category: e.target.value })
+                          handleChange(row._id, { category: e.target.value })
                         }
                       >
                         <option value="Pantry">Pantry</option>
