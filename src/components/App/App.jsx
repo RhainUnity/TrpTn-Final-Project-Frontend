@@ -1,8 +1,10 @@
 // src/components/App/App.jsx
 import { useState, useEffect } from "react";
-import { readJSON, writeJSON, remove } from "../../utils/storage";
 import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
+
+import { signup, signin, checkToken } from "../../utils/auth";
+import { readJSON, writeJSON, remove } from "../../utils/storage";
 
 import Header from "../Header/Header";
 import Main from "../Main/Main";
@@ -15,18 +17,15 @@ import LoginModal from "../Modals/LoginModal/LoginModal";
 import RegisterModal from "../Modals/RegisterModal/RegisterModal";
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(() =>
-    readJSON("currentUser", null),
-  );
+  const [currentUser, setCurrentUser] = useState(null);
+  const [authError, setAuthError] = useState("");
 
   const STORE_TABS = ["WinCo", "Safeway", "Albertson’s"];
   const [activeStore, setActiveStore] = useState("Safeway");
 
-  /* ------------------------------ */
-  // One-time migration: convert old array format to store-based format
   const [userItems, setUserItems] = useState(() => {
     const stored = readJSON("userItems", {});
-    const userKey = readJSON("currentUser", null)?.id || "guest";
+    const userKey = readJSON("currentUser", null)?._id || "guest";
 
     const existing = stored[userKey];
     if (Array.isArray(existing)) {
@@ -38,22 +37,16 @@ function App() {
 
     return stored;
   });
-  /* ------------------------------ */
 
   const isLoggedIn = Boolean(currentUser);
 
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
-  const userKey = currentUser?.id || "guest";
-
-  // Ensure we always have an object for this user
+  const userKey = currentUser?._id || "guest";
   const storeLists = userItems[userKey] || {};
-
-  // Items for the currently selected store
   const items = storeLists[activeStore] || [];
 
-  // Store-specific setter
   const setItemsForUserStore = (store, updater) => {
     setUserItems((prev) => {
       const userData = prev[userKey] || {};
@@ -71,11 +64,9 @@ function App() {
     });
   };
 
-  // Wrapper so components can just call setItems(updater)
   const setItemsForActiveStore = (updater) =>
     setItemsForUserStore(activeStore, updater);
 
-  // ------//////////// temporoary persistence of current user ////////////
   useEffect(() => {
     if (currentUser) {
       writeJSON("currentUser", currentUser);
@@ -88,25 +79,77 @@ function App() {
     writeJSON("userItems", userItems);
   }, [userItems]);
 
-  const handleSignOut = () => {
-    setCurrentUser(null);
-    setActiveStore("Safeway"); // reset to default store on sign out
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (!token) return;
+
+    checkToken(token)
+      .then((userData) => {
+        setCurrentUser(userData);
+      })
+      .catch(() => {
+        localStorage.removeItem("jwt");
+        setCurrentUser(null);
+      });
+  }, []);
+
+  const handleSignIn = ({ email, password }) => {
+    setAuthError("");
+
+    return signin({ email, password })
+      .then((data) => {
+        localStorage.setItem("jwt", data.token);
+        return checkToken(data.token);
+      })
+      .then((userData) => {
+        setCurrentUser(userData);
+        closeAllModals();
+      })
+      .catch((err) => {
+        setAuthError(err.message || "Sign in failed");
+      });
   };
-  // -----//////////////////////////////////
+
+  const handleRegister = ({ name, email, password }) => {
+    setAuthError("");
+
+    return signup({ name, email, password })
+      .then(() => signin({ email, password }))
+      .then((data) => {
+        localStorage.setItem("jwt", data.token);
+        return checkToken(data.token);
+      })
+      .then((userData) => {
+        setCurrentUser(userData);
+        closeAllModals();
+      })
+      .catch((err) => {
+        setAuthError(err.message || "Registration failed");
+      });
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem("jwt");
+    setCurrentUser(null);
+    setActiveStore("Safeway");
+  };
 
   const closeAllModals = () => {
     setIsLoginOpen(false);
     setIsRegisterOpen(false);
+    setAuthError("");
   };
 
   const openLogin = () => {
     setIsRegisterOpen(false);
     setIsLoginOpen(true);
+    setAuthError("");
   };
 
   const openRegister = () => {
     setIsLoginOpen(false);
     setIsRegisterOpen(true);
+    setAuthError("");
   };
 
   return (
@@ -122,7 +165,7 @@ function App() {
       <main className="page__content">
         <Routes>
           <Route path="/about" element={<About />} />
-          {/* Stage 1: allow navigation using localstorage for user state */}
+
           <Route
             path="/profile"
             element={
@@ -164,6 +207,7 @@ function App() {
               />
             }
           />
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
@@ -173,29 +217,17 @@ function App() {
       <LoginModal
         isOpen={isLoginOpen}
         onClose={closeAllModals}
-        onFakeLogin={(email) => {
-          const simplified = email.trim().toLowerCase();
-          setCurrentUser({
-            id: simplified,
-            email: simplified,
-            avatarUrl: currentUser?.avatarUrl || null,
-          });
-        }}
+        onLogin={handleSignIn}
         onOpenRegister={openRegister}
+        authError={authError}
       />
 
       <RegisterModal
         isOpen={isRegisterOpen}
         onClose={closeAllModals}
         onOpenLogin={openLogin}
-        onRegister={({ avatarUrl }) => {
-          const existing = currentUser?.id;
-          const id = existing || `guest-${Date.now()}`;
-          const email = currentUser?.email || "guest@example.com";
-
-          setCurrentUser({ id, email, avatarUrl: avatarUrl || null });
-          closeAllModals();
-        }}
+        onRegister={handleRegister}
+        authError={authError}
       />
     </div>
   );
