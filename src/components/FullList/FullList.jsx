@@ -1,13 +1,12 @@
 // src/components/FullList/FullList.jsx
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./FullList.css";
 import AddItemModal from "../Modals/AddItemModal/AddItemModal";
 import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal/ConfirmDeleteModal";
 
 function FullList({
   items = [],
-  setItems,
   activeStore,
   setActiveStore,
   stores,
@@ -18,6 +17,8 @@ function FullList({
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [deleteItem, setDeleteItem] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const [draftItem, setDraftItem] = useState(null);
+  const [editError, setEditError] = useState("");
 
   const handleAddItem = ({
     item,
@@ -36,37 +37,47 @@ function FullList({
       unit,
       qty: qty ?? 0,
       hidden: hidden ?? false,
-      // store: activeStore,  /// REMOVE THIS
     }).then(() => {
       setIsAddOpen(false);
     });
   };
 
-  const handleChange = (itemId, patch) => {
-    setItems((prev) =>
-      prev.map((row) => (row._id === itemId ? { ...row, ...patch } : row)),
-    );
+  const handleChange = (patch) => {
+    setDraftItem((prev) => ({
+      ...prev,
+      ...patch,
+    }));
   };
 
- const handleSave = (row) => {
-   const updateData = {
-    item: row.item,
-    price: row.price,
-    unit: row.unit,
-    category: row.category,
-    priority: row.priority,
-    qty: row.qty,
-    hidden: row.hidden,
-    store: row.store  || activeStore,
-  };
+  const handleSave = () => {
+    if (!draftItem) return;
 
-  onUpdateItem(row._id, updateData).then(() => {
-    setEditingId(null);
-  });
-};
+    const updateData = {
+      item: draftItem.item,
+      price: draftItem.price,
+      unit: draftItem.unit,
+      category: draftItem.category,
+      priority: draftItem.priority,
+      qty: draftItem.qty,
+      hidden: draftItem.hidden,
+      store: draftItem.store || activeStore,
+    };
+
+    setEditError("");
+
+    onUpdateItem(draftItem._id, updateData)
+      .then(() => {
+        setEditingId(null);
+        setDraftItem(null);
+      })
+      .catch((err) => {
+        setEditError(err.message || "Failed to update item");
+      });
+  };
 
   const handleCancel = () => {
     setEditingId(null);
+    setDraftItem(null);
   };
 
   const requestDelete = (row) => {
@@ -80,10 +91,26 @@ function FullList({
 
     const itemId = deleteItem._id;
     onDeleteItem(itemId).then(() => {
-      if (editingId === itemId) setEditingId(null);
+      if (editingId === itemId) {
+        setEditingId(null);
+        setDraftItem(null);
+      }
       setDeleteItem(null);
     });
   };
+
+  useEffect(() => {
+    setEditingId(null);
+    setDraftItem(null);
+    setDeleteItem(null);
+    setEditError("");
+  }, [activeStore]);
+
+  const isDraftValid =
+    draftItem &&
+    draftItem.item?.trim() &&
+    !Number.isNaN(Number(draftItem.price)) &&
+    Number(draftItem.price) >= 0;
 
   // Store Tabs
   return (
@@ -129,6 +156,7 @@ function FullList({
         <ul className="full__body">
           {items.map((row) => {
             const isEditing = row._id === editingId;
+            const activeRow = isEditing && draftItem ? draftItem : row;
 
             return (
               <li key={row._id} className="full__row">
@@ -139,10 +167,8 @@ function FullList({
                     {isEditing ? (
                       <input
                         className="full__input"
-                        value={row.item}
-                        onChange={(e) =>
-                          handleChange(row._id, { item: e.target.value })
-                        }
+                        value={activeRow.item}
+                        onChange={(e) => handleChange({ item: e.target.value })}
                       />
                     ) : (
                       <span>{row.item}</span>
@@ -154,9 +180,9 @@ function FullList({
                     {isEditing ? (
                       <select
                         className="full__select"
-                        value={row.category}
+                        value={activeRow.category}
                         onChange={(e) =>
-                          handleChange(row._id, { category: e.target.value })
+                          handleChange({ category: e.target.value })
                         }
                       >
                         <option value="Pantry">Pantry</option>
@@ -173,9 +199,9 @@ function FullList({
                     {isEditing ? (
                       <select
                         className="full__select"
-                        value={row.priority}
+                        value={activeRow.priority}
                         onChange={(e) =>
-                          handleChange(row._id, { priority: e.target.value })
+                          handleChange({ priority: e.target.value })
                         }
                       >
                         <option value="Essential">Essential</option>
@@ -195,19 +221,17 @@ function FullList({
                           className="full__input full__input_price"
                           type="number"
                           step="0.01"
-                          value={row.price ?? 0}
+                          value={activeRow.price ?? 0}
                           onChange={(e) =>
-                            handleChange(row._id, {
-                              price: Number(e.target.value),
-                            })
+                            handleChange({ price: Number(e.target.value) })
                           }
                         />
                         <span className="full__slash">/</span>
                         <select
                           className="full__select full__select_unit"
-                          value={row.unit ?? "each"}
+                          value={activeRow.unit ?? "each"}
                           onChange={(e) =>
-                            handleChange(row._id, { unit: e.target.value })
+                            handleChange({ unit: e.target.value })
                           }
                         >
                           <option value="each">each</option>
@@ -239,20 +263,27 @@ function FullList({
                     <input
                       className="full__hide-input"
                       type="checkbox"
-                      checked={!!row.hidden}
+                      checked={!!activeRow.hidden}
                       onChange={(e) =>
-                        handleChange(row._id, { hidden: e.target.checked })
+                        handleChange({ hidden: e.target.checked })
                       }
                     />
                     <span className="full__hide-text">Hide</span>
                   </label>
 
+                  {/*Warn user of edit errors */}
+                  {isEditing && editError && (
+                    <p className="full__error">{editError}</p>
+                  )}
+
+                  {/* Edit/Save/Delete buttons */}
                   {isEditing ? (
                     <div className="full__actions">
                       <button
                         className="btn btn--primary btn--sm full__btnSmall"
                         type="button"
-                        onClick={() => handleSave(row)}
+                        onClick={handleSave}
+                        disabled={!isDraftValid}
                       >
                         Save
                       </button>
@@ -277,7 +308,11 @@ function FullList({
                     <button
                       className="btn btn--outline btn--sm full__btnSmall"
                       type="button"
-                      onClick={() => setEditingId(row._id)}
+                      onClick={() => {
+                        setEditingId(row._id);
+                        setDraftItem({ ...row });
+                        setEditError("");
+                      }}
                     >
                       Edit
                     </button>
