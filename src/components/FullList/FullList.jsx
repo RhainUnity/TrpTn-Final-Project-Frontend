@@ -58,8 +58,8 @@ function FullList({
       unit: draftItem.unit,
       category: draftItem.category,
       priority: draftItem.priority,
-      qty: draftItem.qty,
-      hidden: draftItem.hidden,
+      qty: draftItem.qty ?? 0,
+      hidden: draftItem.hidden ?? false,
       store: draftItem.store || activeStore,
     };
 
@@ -78,6 +78,7 @@ function FullList({
   const handleCancel = () => {
     setEditingId(null);
     setDraftItem(null);
+    setEditError("");
   };
 
   const requestDelete = (row) => {
@@ -264,17 +265,34 @@ function FullList({
                       className="full__hide-input"
                       type="checkbox"
                       checked={!!activeRow.hidden}
-                      onChange={(e) =>
-                        handleChange({ hidden: e.target.checked })
-                      }
+                      onChange={(e) => {
+                        const nextHidden = e.target.checked;
+
+                        if (isEditing) {
+                          handleChange({ hidden: nextHidden });
+                        } else {
+                          setEditError("");
+
+                          onUpdateItem(row._id, {
+                            item: row.item,
+                            price: row.price,
+                            unit: row.unit,
+                            category: row.category,
+                            priority: row.priority,
+                            qty: row.qty ?? 0,
+                            hidden: nextHidden,
+                            store: row.store || activeStore,
+                          }).catch((err) => {
+                            setEditError(err.message || "Failed to hide item");
+                          });
+                        }
+                      }}
                     />
                     <span className="full__hide-text">Hide</span>
                   </label>
 
                   {/*Warn user of edit errors */}
-                  {isEditing && editError && (
-                    <p className="full__error">{editError}</p>
-                  )}
+                  {editError && <p className="full__error">{editError}</p>}
 
                   {/* Edit/Save/Delete buttons */}
                   {isEditing ? (
