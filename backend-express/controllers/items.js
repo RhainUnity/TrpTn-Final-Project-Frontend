@@ -72,8 +72,28 @@ const deleteItem = (req, res, next) => {
     });
 };
 
+const updateItem = (req, res, next) => {
+  Item.findById(req.params.itemId)
+    .orFail(() => new NotFoundError(MESSAGE_NOT_FOUND_ITEM))
+    .then((item) => {
+      if (item.owner.toString() !== req.user._id) {
+        throw new ForbiddenError(MESSAGE_FORBIDDEN);
+      }
+
+      return Item.findByIdAndUpdate(req.params.itemId, req.body, {
+        new: true,
+        runValidators: true,
+      });
+    })
+    .then((updatedItem) => {
+      res.send(updatedItem);
+    })
+    .catch(next);
+};
+
 module.exports = {
   getItems,
   createItem,
   deleteItem,
+  updateItem,
 };

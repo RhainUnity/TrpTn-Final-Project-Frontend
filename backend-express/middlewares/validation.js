@@ -36,9 +36,23 @@ const validateItemId = celebrate({
   }),
 });
 
+const validateUpdateItem = celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    item: Joi.string().min(1).max(100),
+    price: Joi.number().min(0),
+    unit: Joi.string(),
+    category: Joi.string().valid("Pantry", "Dairy", "Meat"),
+    priority: Joi.string().valid("Essential", "Surplus", "Optional"),
+    qty: Joi.number().min(0),
+    hidden: Joi.boolean(),
+    store: Joi.string().valid("WinCo", "Safeway", "Albertson’s"),
+  }),
+});
+
 module.exports = {
   validateSignup,
   validateSignin,
   validateCreateItem,
   validateItemId,
+  validateUpdateItem,
 };
