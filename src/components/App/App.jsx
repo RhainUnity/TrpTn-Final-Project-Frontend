@@ -119,12 +119,12 @@ function App() {
       setItems((prev) => [createdItem, ...prev]);
     });
 
-    const handleUpdateItem = (itemId, patch) =>
-  updateItem(itemId, patch).then((updatedItem) => {
-    setItems((prev) =>
-      prev.map((item) => (item._id === itemId ? updatedItem : item)),
-    );
-  });
+  const handleUpdateItem = (itemId, patch) =>
+    updateItem(itemId, patch).then((updatedItem) => {
+      setItems((prev) =>
+        prev.map((item) => (item._id === itemId ? updatedItem : item)),
+      );
+    });
 
   const handleDeleteItem = (itemId) =>
     deleteItem(itemId).then(() => {
@@ -194,10 +194,11 @@ function App() {
             element={
               <Main
                 items={storeItems}
-                setItems={setItems}
+                // setItems={setItems}  // Remove this
                 activeStore={activeStore}
                 setActiveStore={setActiveStore}
                 stores={STORE_TABS}
+                onUpdateItem={handleUpdateItem}
               />
             }
           />

@@ -5,10 +5,11 @@ import "./Main.css";
 
 function Main({
   items = [],
-  setItems,
+  // setItems,
   activeStore,
   setActiveStore,
   stores = [],
+  onUpdateItem,
 }) {
   const [filterCategory, setFilterCategory] = useState("All");
   const [filterPriority, setFilterPriority] = useState("All");
@@ -26,22 +27,30 @@ function Main({
     [visibleItems],
   );
 
-  const handleInc = (id) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, qty: (item.qty ?? 0) + 1 } : item,
-      ),
-    );
+  const handleInc = (row) => {
+    onUpdateItem(row._id, {
+      item: row.item,
+      price: row.price,
+      unit: row.unit,
+      category: row.category,
+      priority: row.priority,
+      qty: (row.qty ?? 0) + 1,
+      hidden: row.hidden ?? false,
+      store: row.store || activeStore,
+    });
   };
 
-  const handleDec = (id) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, qty: Math.max(0, (item.qty ?? 0) - 1) }
-          : item,
-      ),
-    );
+  const handleDec = (row) => {
+    onUpdateItem(row._id, {
+      item: row.item,
+      price: row.price,
+      unit: row.unit,
+      category: row.category,
+      priority: row.priority,
+      qty: Math.max(0, (row.qty ?? 0) - 1),
+      hidden: row.hidden ?? false,
+      store: row.store || activeStore,
+    });
   };
 
   const matchesCategory = (i) =>
@@ -146,7 +155,7 @@ function Main({
         ) : (
           <ul className="main__list">
             {filteredItems.map((row) => (
-              <li key={row.id} className="main__row">
+              <li key={row._id} className="main__row">
                 <div className="main__row-left">
                   <span className="main__item-name">{row.item}</span>
                   <span className="main__unit">{getUnitLabel(row.unit)}</span>
@@ -167,7 +176,7 @@ function Main({
                     <button
                       className="main__qty-btn btn btn--outline btn--sm"
                       type="button"
-                      onClick={() => handleDec(row.id)}
+                      onClick={() => handleDec(row)}
                       aria-label={`Decrease quantity of ${row.item}`}
                     >
                       –
@@ -183,7 +192,7 @@ function Main({
                     <button
                       className="main__qty-btn btn btn--outline btn--sm"
                       type="button"
-                      onClick={() => handleInc(row.id)}
+                      onClick={() => handleInc(row)}
                       aria-label={`Increase quantity of ${row.item}`}
                     >
                       +
