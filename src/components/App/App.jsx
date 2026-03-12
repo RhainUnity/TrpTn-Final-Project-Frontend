@@ -36,6 +36,16 @@ function App() {
     [items, activeStore],
   );
 
+  const finalizeAuth = (authData) => {
+    localStorage.setItem("jwt", authData.token);
+
+    return checkToken(authData.token).then((userData) => {
+      setCurrentUser(userData);
+      closeAllModals();
+      return loadItems();
+    });
+  };
+
   const loadItems = () => {
     const token = localStorage.getItem("jwt");
     if (!token) return Promise.resolve();
@@ -78,15 +88,7 @@ function App() {
     setAuthError("");
 
     return signin({ email, password })
-      .then((data) => {
-        localStorage.setItem("jwt", data.token);
-        return checkToken(data.token);
-      })
-      .then((userData) => {
-        setCurrentUser(userData);
-        closeAllModals();
-        return loadItems();
-      })
+      .then(finalizeAuth)
       .catch((err) => {
         setAuthError(err.message || "Sign in failed");
       });
@@ -97,15 +99,7 @@ function App() {
 
     return signup({ name, email, password })
       .then(() => signin({ email, password }))
-      .then((data) => {
-        localStorage.setItem("jwt", data.token);
-        return checkToken(data.token);
-      })
-      .then((userData) => {
-        setCurrentUser(userData);
-        closeAllModals();
-        return loadItems();
-      })
+      .then(finalizeAuth)
       .catch((err) => {
         setAuthError(err.message || "Registration failed");
       });
@@ -128,6 +122,7 @@ function App() {
     return updateItem(itemId, patch).catch((err) => {
       console.error("Failed to update item:", err);
       loadItems(); // fallback reload
+      throw err;
     });
   };
 

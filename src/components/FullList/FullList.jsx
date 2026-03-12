@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import "./FullList.css";
 import AddItemModal from "../Modals/AddItemModal/AddItemModal";
 import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal/ConfirmDeleteModal";
+import { buildItemPayload } from "../../utils/itemPayload";
 
 function FullList({
   items = [],
@@ -56,16 +57,7 @@ function FullList({
     setIsSaving(true);
     setEditError("");
 
-    const updateData = {
-      item: draftItem.item,
-      price: draftItem.price,
-      unit: draftItem.unit,
-      category: draftItem.category,
-      priority: draftItem.priority,
-      qty: draftItem.qty ?? 0,
-      hidden: draftItem.hidden ?? false,
-      store: draftItem.store || activeStore,
-    };
+    const updateData = buildItemPayload(draftItem, activeStore);
 
     onUpdateItem(draftItem._id, updateData)
       .then(() => {
@@ -311,7 +303,9 @@ function FullList({
                     </label>
 
                     {/*Warn user of edit errors */}
-                    {editError && <p className="full__error">{editError}</p>}
+                    {isEditing && editError && (
+                      <p className="full__error">{editError}</p>
+                    )}
 
                     {/* Edit/Save/Delete buttons */}
                     {isEditing ? (

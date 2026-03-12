@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Main.css";
+import { buildItemPayload } from "../../utils/itemPayload";
 
 function Main({
   items = [],
@@ -13,8 +14,6 @@ function Main({
 }) {
   const [filterCategory, setFilterCategory] = useState("All");
   const [filterPriority, setFilterPriority] = useState("All");
-
-  // item variables to be implemented from backend later
 
   const visibleItems = items.filter((i) => !i.hidden);
 
@@ -31,14 +30,8 @@ function Main({
     if (!onUpdateItem) return;
 
     onUpdateItem(row._id, {
-      item: row.item,
-      price: row.price,
-      unit: row.unit,
-      category: row.category,
-      priority: row.priority,
+      ...buildItemPayload(row, activeStore),
       qty: (row.qty ?? 0) + 1,
-      hidden: row.hidden ?? false,
-      store: row.store || activeStore,
     });
   };
 
@@ -46,14 +39,8 @@ function Main({
     if (!onUpdateItem) return;
 
     onUpdateItem(row._id, {
-      item: row.item,
-      price: row.price,
-      unit: row.unit,
-      category: row.category,
-      priority: row.priority,
+      ...buildItemPayload(row, activeStore),
       qty: Math.max(0, (row.qty ?? 0) - 1),
-      hidden: row.hidden ?? false,
-      store: row.store || activeStore,
     });
   };
 
