@@ -19,6 +19,7 @@ function FullList({
   const [editingId, setEditingId] = useState(null);
   const [draftItem, setDraftItem] = useState(null);
   const [editError, setEditError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleAddItem = ({
     item,
@@ -52,6 +53,9 @@ function FullList({
   const handleSave = () => {
     if (!draftItem) return;
 
+    setIsSaving(true);
+    setEditError("");
+
     const updateData = {
       item: draftItem.item,
       price: draftItem.price,
@@ -63,8 +67,6 @@ function FullList({
       store: draftItem.store || activeStore,
     };
 
-    setEditError("");
-
     onUpdateItem(draftItem._id, updateData)
       .then(() => {
         setEditingId(null);
@@ -72,6 +74,9 @@ function FullList({
       })
       .catch((err) => {
         setEditError(err.message || "Failed to update item");
+      })
+      .finally(() => {
+        setIsSaving(false);
       });
   };
 
@@ -154,192 +159,209 @@ function FullList({
         </div>
 
         {/* Items Info */}
-        <ul className="full__body">
-          {items.map((row) => {
-            const isEditing = row._id === editingId;
-            const activeRow = isEditing && draftItem ? draftItem : row;
+        {items.length === 0 ? (
+          <p className="full__empty">No items in this store yet.</p>
+        ) : (
+          <ul className="full__body">
+            {items.map((row) => {
+              const isEditing = row._id === editingId;
+              const activeRow = isEditing && draftItem ? draftItem : row;
 
-            return (
-              <li key={row._id} className="full__row">
-                {/* Top item/specs grid */}
-                <div className="full__row-main">
-                  {/* Item name */}
-                  <div className="full__cell full__col_item">
-                    {isEditing ? (
-                      <input
-                        className="full__input"
-                        value={activeRow.item}
-                        onChange={(e) => handleChange({ item: e.target.value })}
-                      />
-                    ) : (
-                      <span>{row.item}</span>
-                    )}
-                  </div>
-
-                  {/* Category */}
-                  <div className="full__cell full__col_category">
-                    {isEditing ? (
-                      <select
-                        className="full__select"
-                        value={activeRow.category}
-                        onChange={(e) =>
-                          handleChange({ category: e.target.value })
-                        }
-                      >
-                        <option value="Pantry">Pantry</option>
-                        <option value="Dairy">Dairy</option>
-                        <option value="Meat">Meat</option>
-                      </select>
-                    ) : (
-                      <span>{row.category}</span>
-                    )}
-                  </div>
-
-                  {/* Priority */}
-                  <div className="full__cell full__col_priority">
-                    {isEditing ? (
-                      <select
-                        className="full__select"
-                        value={activeRow.priority}
-                        onChange={(e) =>
-                          handleChange({ priority: e.target.value })
-                        }
-                      >
-                        <option value="Essential">Essential</option>
-                        <option value="Surplus">Surplus</option>
-                        <option value="Optional">Optional</option>
-                      </select>
-                    ) : (
-                      <span>{row.priority}</span>
-                    )}
-                  </div>
-
-                  {/* Price */}
-                  <div className="full__cell full__col_price">
-                    {isEditing ? (
-                      <div className="full__price-edit">
+              return (
+                <li key={row._id} className="full__row">
+                  {/* Top item/specs grid */}
+                  <div className="full__row-main">
+                    {/* Item name */}
+                    <div className="full__cell full__col_item">
+                      {isEditing ? (
                         <input
-                          className="full__input full__input_price"
-                          type="number"
-                          step="0.01"
-                          value={activeRow.price ?? 0}
+                          className="full__input"
+                          value={activeRow.item}
                           onChange={(e) =>
-                            handleChange({ price: Number(e.target.value) })
+                            handleChange({ item: e.target.value })
                           }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && isDraftValid) {
+                              handleSave();
+                            } else if (e.key === "Escape") {
+                              handleCancel();
+                            }
+                          }}
                         />
-                        <span className="full__slash">/</span>
+                      ) : (
+                        <span>{row.item}</span>
+                      )}
+                    </div>
+
+                    {/* Category */}
+                    <div className="full__cell full__col_category">
+                      {isEditing ? (
                         <select
-                          className="full__select full__select_unit"
-                          value={activeRow.unit ?? "each"}
+                          className="full__select"
+                          value={activeRow.category}
                           onChange={(e) =>
-                            handleChange({ unit: e.target.value })
+                            handleChange({ category: e.target.value })
                           }
                         >
-                          <option value="each">each</option>
-                          <option value="lb">lb</option>
-                          <option value="oz">oz</option>
-                          <option value="g">g</option>
-                          <option value="kg">kg</option>
-                          <option value="dozen">dozen</option>
-                          <option value="qt">qt</option>
-                          <option value="gallon">gallon</option>
-                          <option value="bag">bag</option>
-                          <option value="box">box</option>
+                          <option value="Pantry">Pantry</option>
+                          <option value="Dairy">Dairy</option>
+                          <option value="Meat">Meat</option>
                         </select>
+                      ) : (
+                        <span>{row.category}</span>
+                      )}
+                    </div>
+
+                    {/* Priority */}
+                    <div className="full__cell full__col_priority">
+                      {isEditing ? (
+                        <select
+                          className="full__select"
+                          value={activeRow.priority}
+                          onChange={(e) =>
+                            handleChange({ priority: e.target.value })
+                          }
+                        >
+                          <option value="Essential">Essential</option>
+                          <option value="Surplus">Surplus</option>
+                          <option value="Optional">Optional</option>
+                        </select>
+                      ) : (
+                        <span>{row.priority}</span>
+                      )}
+                    </div>
+
+                    {/* Price */}
+                    <div className="full__cell full__col_price">
+                      {isEditing ? (
+                        <div className="full__price-edit">
+                          <input
+                            className="full__input full__input_price"
+                            type="number"
+                            step="0.01"
+                            value={activeRow.price ?? 0}
+                            onChange={(e) =>
+                              handleChange({ price: Number(e.target.value) })
+                            }
+                          />
+                          <span className="full__slash">/</span>
+                          <select
+                            className="full__select full__select_unit"
+                            value={activeRow.unit ?? "each"}
+                            onChange={(e) =>
+                              handleChange({ unit: e.target.value })
+                            }
+                          >
+                            <option value="each">each</option>
+                            <option value="lb">lb</option>
+                            <option value="oz">oz</option>
+                            <option value="g">g</option>
+                            <option value="kg">kg</option>
+                            <option value="dozen">dozen</option>
+                            <option value="qt">qt</option>
+                            <option value="gallon">gallon</option>
+                            <option value="bag">bag</option>
+                            <option value="box">box</option>
+                          </select>
+                        </div>
+                      ) : (
+                        <span className="full__price-text">
+                          ${Number(row.price ?? 0).toFixed(2)}
+                          {typeof row.unit === "string" && row.unit.trim()
+                            ? ` / ${row.unit.trim()}`
+                            : ""}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* BOTTOM: actions bar */}
+                  <div className="full__row-actions">
+                    <label className="full__hide">
+                      <input
+                        className="full__hide-input"
+                        type="checkbox"
+                        checked={!!activeRow.hidden}
+                        onChange={(e) => {
+                          const nextHidden = e.target.checked;
+
+                          if (isEditing) {
+                            handleChange({ hidden: nextHidden });
+                          } else {
+                            setEditError("");
+
+                            onUpdateItem(row._id, {
+                              item: row.item,
+                              price: row.price,
+                              unit: row.unit,
+                              category: row.category,
+                              priority: row.priority,
+                              qty: row.qty ?? 0,
+                              hidden: nextHidden,
+                              store: row.store || activeStore,
+                            }).catch((err) => {
+                              setEditError(
+                                err.message || "Failed to hide item",
+                              );
+                            });
+                          }
+                        }}
+                      />
+                      <span className="full__hide-text">Hide</span>
+                    </label>
+
+                    {/*Warn user of edit errors */}
+                    {editError && <p className="full__error">{editError}</p>}
+
+                    {/* Edit/Save/Delete buttons */}
+                    {isEditing ? (
+                      <div className="full__actions">
+                        <button
+                          className="btn btn--primary btn--sm full__btnSmall"
+                          type="button"
+                          onClick={handleSave}
+                          disabled={!isDraftValid || isSaving}
+                        >
+                          {isSaving ? "Saving..." : "Save"}
+                        </button>
+
+                        <button
+                          className="btn btn--outline btn--sm full__btnSmall"
+                          type="button"
+                          onClick={() => requestDelete(row)}
+                          disabled={isSaving}
+                        >
+                          Delete
+                        </button>
+
+                        <button
+                          className="btn btn--outline btn--sm full__btnSmall"
+                          type="button"
+                          onClick={handleCancel}
+                          disabled={isSaving}
+                        >
+                          Cancel
+                        </button>
                       </div>
                     ) : (
-                      <span className="full__price-text">
-                        ${Number(row.price ?? 0).toFixed(2)}
-                        {typeof row.unit === "string" && row.unit.trim()
-                          ? ` / ${row.unit.trim()}`
-                          : ""}
-                      </span>
+                      <button
+                        className="btn btn--outline btn--sm full__btnSmall"
+                        type="button"
+                        onClick={() => {
+                          setEditingId(row._id);
+                          setDraftItem({ ...row });
+                          setEditError("");
+                        }}
+                      >
+                        Edit
+                      </button>
                     )}
                   </div>
-                </div>
-
-                {/* BOTTOM: actions bar */}
-                <div className="full__row-actions">
-                  <label className="full__hide">
-                    <input
-                      className="full__hide-input"
-                      type="checkbox"
-                      checked={!!activeRow.hidden}
-                      onChange={(e) => {
-                        const nextHidden = e.target.checked;
-
-                        if (isEditing) {
-                          handleChange({ hidden: nextHidden });
-                        } else {
-                          setEditError("");
-
-                          onUpdateItem(row._id, {
-                            item: row.item,
-                            price: row.price,
-                            unit: row.unit,
-                            category: row.category,
-                            priority: row.priority,
-                            qty: row.qty ?? 0,
-                            hidden: nextHidden,
-                            store: row.store || activeStore,
-                          }).catch((err) => {
-                            setEditError(err.message || "Failed to hide item");
-                          });
-                        }
-                      }}
-                    />
-                    <span className="full__hide-text">Hide</span>
-                  </label>
-
-                  {/*Warn user of edit errors */}
-                  {editError && <p className="full__error">{editError}</p>}
-
-                  {/* Edit/Save/Delete buttons */}
-                  {isEditing ? (
-                    <div className="full__actions">
-                      <button
-                        className="btn btn--primary btn--sm full__btnSmall"
-                        type="button"
-                        onClick={handleSave}
-                        disabled={!isDraftValid}
-                      >
-                        Save
-                      </button>
-
-                      <button
-                        className="btn btn--outline btn--sm full__btnSmall"
-                        type="button"
-                        onClick={() => requestDelete(row)}
-                      >
-                        Delete
-                      </button>
-
-                      <button
-                        className="btn btn--outline btn--sm full__btnSmall"
-                        type="button"
-                        onClick={handleCancel}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      className="btn btn--outline btn--sm full__btnSmall"
-                      type="button"
-                      onClick={() => {
-                        setEditingId(row._id);
-                        setDraftItem({ ...row });
-                        setEditError("");
-                      }}
-                    >
-                      Edit
-                    </button>
-                  )}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+                </li>
+              );
+            })}
+          </ul>
+        )}
 
         <div className="full__spacer" />
       </div>

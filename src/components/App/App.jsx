@@ -32,7 +32,7 @@ function App() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
   const storeItems = useMemo(
-    () => items.filter((item) => (item.store || "Safeway") === activeStore),
+    () => items.filter((item) => (item.store ?? "Safeway") === activeStore),
     [items, activeStore],
   );
 
@@ -119,12 +119,17 @@ function App() {
       setItems((prev) => [createdItem, ...prev]);
     });
 
-  const handleUpdateItem = (itemId, patch) =>
-    updateItem(itemId, patch).then((updatedItem) => {
-      setItems((prev) =>
-        prev.map((item) => (item._id === itemId ? updatedItem : item)),
-      );
+  const handleUpdateItem = (itemId, patch) => {
+    // optimistic update
+    setItems((prev) =>
+      prev.map((item) => (item._id === itemId ? { ...item, ...patch } : item)),
+    );
+
+    return updateItem(itemId, patch).catch((err) => {
+      console.error("Failed to update item:", err);
+      loadItems(); // fallback reload
     });
+  };
 
   const handleDeleteItem = (itemId) =>
     deleteItem(itemId).then(() => {

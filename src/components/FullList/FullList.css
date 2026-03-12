@@ -87,6 +87,13 @@
   font-size: 16px;
 }
 
+.full__empty {
+  padding: 40px 0;
+  text-align: center;
+  color: #777;
+  font-size: 15px;
+}
+
 /* Rows */
 .full__row {
   padding: 10px 8px;
