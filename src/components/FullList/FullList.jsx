@@ -13,6 +13,7 @@ function FullList({
   stores,
   onAddItem,
   onDeleteItem,
+  onUpdateItem,
 }) {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [deleteItem, setDeleteItem] = useState(null);
@@ -47,9 +48,22 @@ function FullList({
     );
   };
 
-  const handleSave = () => {
-    setEditingId(null);
+ const handleSave = (row) => {
+   const updateData = {
+    item: row.item,
+    price: row.price,
+    unit: row.unit,
+    category: row.category,
+    priority: row.priority,
+    qty: row.qty,
+    hidden: row.hidden,
+    store: row.store  || activeStore,
   };
+
+  onUpdateItem(row._id, updateData).then(() => {
+    setEditingId(null);
+  });
+};
 
   const handleCancel = () => {
     setEditingId(null);
@@ -238,7 +252,7 @@ function FullList({
                       <button
                         className="btn btn--primary btn--sm full__btnSmall"
                         type="button"
-                        onClick={handleSave}
+                        onClick={() => handleSave(row)}
                       >
                         Save
                       </button>

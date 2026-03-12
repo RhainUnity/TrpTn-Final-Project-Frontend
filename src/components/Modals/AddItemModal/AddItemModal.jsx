@@ -66,7 +66,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
       priority: priority || "Essential",
     });
 
-    onClose();
+   // onClose();  //------REMOVE THIS
   };
 
   return (

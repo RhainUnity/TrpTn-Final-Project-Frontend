@@ -58,3 +58,14 @@ export function deleteItem(itemId) {
     },
   }).then(checkResponse);
 }
+
+export function updateItem(itemId, itemData) {
+  return fetch(`${BASE_URL}/items/${itemId}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(itemData),
+  }).then(checkResponse);
+}

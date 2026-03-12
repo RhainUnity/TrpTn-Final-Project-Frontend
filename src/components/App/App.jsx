@@ -4,7 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 
 import { signup, signin, checkToken } from "../../utils/auth";
-import { getItems, createItem, deleteItem } from "../../utils/api";
+import { getItems, createItem, deleteItem, updateItem } from "../../utils/api";
 
 import Header from "../Header/Header";
 import Main from "../Main/Main";
@@ -119,6 +119,13 @@ function App() {
       setItems((prev) => [createdItem, ...prev]);
     });
 
+    const handleUpdateItem = (itemId, patch) =>
+  updateItem(itemId, patch).then((updatedItem) => {
+    setItems((prev) =>
+      prev.map((item) => (item._id === itemId ? updatedItem : item)),
+    );
+  });
+
   const handleDeleteItem = (itemId) =>
     deleteItem(itemId).then(() => {
       setItems((prev) => prev.filter((item) => item._id !== itemId));
@@ -206,6 +213,7 @@ function App() {
                 stores={STORE_TABS}
                 onAddItem={handleAddItem}
                 onDeleteItem={handleDeleteItem}
+                onUpdateItem={handleUpdateItem}
               />
             }
           />
