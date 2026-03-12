@@ -194,7 +194,6 @@ function App() {
             element={
               <Main
                 items={storeItems}
-                // setItems={setItems}  // Remove this
                 activeStore={activeStore}
                 setActiveStore={setActiveStore}
                 stores={STORE_TABS}
@@ -208,7 +207,6 @@ function App() {
             element={
               <FullList
                 items={storeItems}
-                setItems={setItems}
                 activeStore={activeStore}
                 setActiveStore={setActiveStore}
                 stores={STORE_TABS}

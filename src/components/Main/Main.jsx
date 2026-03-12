@@ -28,6 +28,8 @@ function Main({
   );
 
   const handleInc = (row) => {
+    if (!onUpdateItem) return;
+
     onUpdateItem(row._id, {
       item: row.item,
       price: row.price,
@@ -41,6 +43,8 @@ function Main({
   };
 
   const handleDec = (row) => {
+    if (!onUpdateItem) return;
+
     onUpdateItem(row._id, {
       item: row.item,
       price: row.price,
