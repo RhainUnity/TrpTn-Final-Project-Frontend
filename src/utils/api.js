@@ -6,6 +6,7 @@ function getToken() {
   return localStorage.getItem("jwt");
 }
 
+/*-------------------FIRST ATTEMPT-------------------*/
 // function checkResponse(res) {
 //   if (!res.ok) {
 //     return res.json().then((err) => Promise.reject(err));
@@ -18,15 +19,37 @@ function getToken() {
 //   return localStorage.getItem("jwt");
 // }
 
+/*-------------------UPDATED WITH BETTER ERROR HANDLING-------------------*/
+// function checkResponse(res) {
+//   if (!res.ok) {
+//     return res.json().then((err) => {
+//       console.log("API ERROR:", err);
+//       return Promise.reject(err);
+//     });
+//   }
+
+//   return res.json();
+// }
+
+/*-------------------FINAL VERSION WITH TEXT ERROR HANDLING-------------------*/
 function checkResponse(res) {
-  if (!res.ok) {
-    return res.json().then((err) => {
-      console.log("API ERROR:", err);
-      return Promise.reject(err);
-    });
+  if (res.ok) {
+    if (res.status === 204) return null;
+    return res.json();
   }
 
-  return res.json();
+  const contentType = res.headers.get("content-type") || "";
+
+  if (contentType.includes("application/json")) {
+    return res.json().then((err) => Promise.reject(err));
+  }
+
+  return res.text().then((text) =>
+    Promise.reject({
+      message: text || `Request failed with status ${res.status}`,
+      statusCode: res.status,
+    }),
+  );
 }
 
 export function getItems() {
