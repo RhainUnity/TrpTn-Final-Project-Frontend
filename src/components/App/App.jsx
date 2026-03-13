@@ -114,7 +114,8 @@ function App() {
     });
 
   const handleUpdateItem = (itemId, patch) => {
-    // optimistic update
+    // optimistic update -- immediately reflect change in UI, then confirm with server
+    // if server update fails, revert to latest from server
     setItems((prev) =>
       prev.map((item) => (item._id === itemId ? { ...item, ...patch } : item)),
     );
