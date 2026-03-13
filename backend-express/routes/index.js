@@ -1,14 +1,12 @@
-// index.js - Main API router
+// backend-express/routes/index.js - Main API router
 
 const router = require("express").Router();
 const userRoutes = require("./users");
 const itemRoutes = require("./items");
+const pricingRoutes = require("./pricing");
 
-router.get("/ping", (req, res) => {
-  res.send({ message: "pong" });
-});
-
-router.use(userRoutes);
-router.use(itemRoutes);
+router.use("/users", userRoutes);
+router.use("/items", itemRoutes);
+router.use("/pricing", pricingRoutes);
 
 module.exports = router;

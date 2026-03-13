@@ -11,7 +11,7 @@ function checkResponse(res) {
 }
 
 export function signup({ name, email, password }) {
-  return fetch(`${BASE_URL}/signup`, {
+  return fetch(`${BASE_URL}/users/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -25,7 +25,7 @@ export function signup({ name, email, password }) {
 }
 
 export function signin({ email, password }) {
-  return fetch(`${BASE_URL}/signin`, {
+  return fetch(`${BASE_URL}/users/signin`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

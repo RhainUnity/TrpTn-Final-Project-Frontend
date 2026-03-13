@@ -38,12 +38,12 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
   const handleUseLookupPrice = (lookupResult) => {
     if (!lookupResult) return;
 
-    setName((prev) => (prev.trim() ? prev : lookupResult.matchedKey));
+    setName(lookupResult.displayLabel || lookupResult.matchedKey || "");
     setPrice(formatPriceForInput(lookupResult.price));
     setUnit(lookupResult.unit || "each");
 
     const suggestedCategory =
-      lookupResult.matchedKey === "milk" || lookupResult.matchedKey === "eggs"
+      lookupResult.matchedKey === "milk" || lookupResult.matchedKey === "egg"
         ? "Dairy"
         : lookupResult.matchedKey === "chicken"
           ? "Meat"
@@ -65,8 +65,6 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
       category: category.trim() || "Pantry",
       priority: priority || "Essential",
     });
-
-   // onClose();  //------REMOVE THIS
   };
 
   return (

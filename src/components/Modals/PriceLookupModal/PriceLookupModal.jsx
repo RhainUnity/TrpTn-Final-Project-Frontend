@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
-import { fetchBlsSeries } from "../../../utils/blsApi";
-import { resolveSeriesId } from "../../../utils/blsSeriesMap";
+import { fetchAveragePrice } from "../../../utils/api";
 import "./PriceLookupModal.css";
 
 function PriceLookupModal({ isOpen, onClose, onUsePrice }) {
@@ -22,40 +21,32 @@ function PriceLookupModal({ isOpen, onClose, onUsePrice }) {
   }, [isOpen]);
 
   const handleLookupSearch = async () => {
-    const resolved = resolveSeriesId(lookupQuery);
-
-    if (!resolved) {
-      setLookupStatus("error");
-      setLookupError(
-        "No match yet. Try: banana, milk (we’ll add more items soon).",
-      );
-      setLookupResult(null);
-      return;
-    }
-
     try {
       setLookupStatus("loading");
       setLookupError("");
       setLookupResult(null);
 
-      const latest = await fetchBlsSeries(resolved.seriesId);
-      if (!latest || Number.isNaN(latest.value)) {
-        throw new Error("No data returned for that item.");
-      }
+      const result = await fetchAveragePrice(lookupQuery);
 
       setLookupResult({
-        matchedKey: resolved.key,
-        seriesId: latest.seriesId || resolved.seriesId,
-        price: latest.value,
-        unit: resolved.unit || "each",
-        periodName: latest.periodName,
-        year: latest.year,
+        matchedKey: result.item,
+        displayLabel: result.label || result.item,
+        seriesId: result.seriesId,
+        price: result.price,
+        unit: result.unit || "each",
+        periodName: result.month,
+        year: result.year,
       });
 
       setLookupStatus("done");
     } catch (e) {
       setLookupStatus("error");
-      setLookupError(e?.message || "Lookup failed");
+
+      setLookupError(
+        e?.message ||
+          "No match yet. Try: banana, milk (we’ll add more items soon).",
+      );
+
       setLookupResult(null);
     }
   };
@@ -113,7 +104,7 @@ function PriceLookupModal({ isOpen, onClose, onUsePrice }) {
         {lookupResult && (
           <div className="lookupmodal__card">
             <p className="lookupmodal__title">
-              Match: <strong>{lookupResult.matchedKey}</strong>
+              Match: <strong>{lookupResult.displayLabel}</strong>
             </p>
             <p>
               Avg price:{" "}

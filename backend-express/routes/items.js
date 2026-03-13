@@ -14,15 +14,9 @@ const {
   validateUpdateItem,
 } = require("../middlewares/validation");
 
-router.get("/items", auth, getItems);
-router.post("/items", auth, validateCreateItem, createItem);
-router.delete("/items/:itemId", auth, validateItemId, deleteItem);
-router.patch(
-  "/items/:itemId",
-  auth,
-  validateItemId,
-  validateUpdateItem,
-  updateItem,
-);
+router.get("/", auth, getItems);
+router.post("/", auth, validateCreateItem, createItem);
+router.delete("/:itemId", auth, validateItemId, deleteItem);
+router.patch("/:itemId", auth, validateItemId, validateUpdateItem, updateItem);
 
 module.exports = router;

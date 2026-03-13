@@ -92,3 +92,15 @@ export function updateItem(itemId, itemData) {
     body: JSON.stringify(itemData),
   }).then(checkResponse);
 }
+
+export function fetchAveragePrice(query) {
+  return fetch(
+    `${BASE_URL}/pricing/average-price?query=${encodeURIComponent(query)}`,
+    {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+        "Content-Type": "application/json",
+      },
+    },
+  ).then(checkResponse);
+}
