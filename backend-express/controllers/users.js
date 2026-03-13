@@ -69,6 +69,36 @@ const login = (req, res, next) => {
     });
 };
 
+const updateCurrentUser = (req, res, next) => {
+  const { avatarUrl } = req.body;
+
+  User.findByIdAndUpdate(
+    req.user._id,
+    { avatarUrl: avatarUrl || "" },
+    { new: true, runValidators: true },
+  )
+    .then((user) => {
+      if (!user) {
+        next(new NotFoundError(ERROR_MESSAGES.USER_NOT_FOUND));
+        return;
+      }
+
+      res.send({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatarUrl: user.avatarUrl,
+      });
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        next(new BadRequestError(ERROR_MESSAGES.INVALID_USER_DATA));
+        return;
+      }
+      next(err);
+    });
+};
+
 const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
@@ -81,6 +111,7 @@ const getCurrentUser = (req, res, next) => {
         _id: user._id,
         name: user.name,
         email: user.email,
+        avatarUrl: user.avatarUrl,
       });
     })
     .catch(next);
@@ -90,4 +121,5 @@ module.exports = {
   createUser,
   login,
   getCurrentUser,
+  updateCurrentUser,
 };

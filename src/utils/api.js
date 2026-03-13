@@ -52,6 +52,17 @@ function checkResponse(res) {
   );
 }
 
+export function updateCurrentUser(data) {
+  return fetch(`${BASE_URL}/users/me`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  }).then(checkResponse);
+}
+
 export function getItems() {
   return fetch(`${BASE_URL}/items`, {
     headers: {

@@ -4,7 +4,13 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 
 import { signup, signin, checkToken } from "../../utils/auth";
-import { getItems, createItem, deleteItem, updateItem } from "../../utils/api";
+import {
+  getItems,
+  createItem,
+  deleteItem,
+  updateItem,
+  updateCurrentUser,
+} from "../../utils/api";
 
 import Header from "../Header/Header";
 import Main from "../Main/Main";
@@ -157,6 +163,11 @@ function App() {
     setAuthError("");
   };
 
+  const handleUpdateAvatar = (avatarPatch) =>
+    updateCurrentUser(avatarPatch).then((updatedUser) => {
+      setCurrentUser(updatedUser);
+    });
+
   return (
     <div className="page">
       <Header
@@ -181,11 +192,7 @@ function App() {
                 isLoggedIn={isLoggedIn}
                 user={currentUser}
                 itemCount={items.length}
-                onUpdateAvatar={(avatarPatch) =>
-                  setCurrentUser((prev) =>
-                    prev ? { ...prev, ...avatarPatch } : prev,
-                  )
-                }
+                onUpdateAvatar={handleUpdateAvatar}
               />
             }
           />

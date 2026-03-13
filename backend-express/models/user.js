@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
+  avatarUrl: {
+    type: String,
+    default: "",
+  },
 });
 
 userSchema.statics.findUserByCredentials = function findUserByCredentials(

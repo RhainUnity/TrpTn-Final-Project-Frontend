@@ -74,10 +74,10 @@ const deleteItem = (req, res, next) => {
 
 const updateItem = (req, res, next) => {
   Item.findById(req.params.itemId)
-    .orFail(() => new NotFoundError(MESSAGE_NOT_FOUND_ITEM))
+    .orFail(() => new NotFoundError(ERROR_MESSAGES.ITEM_NOT_FOUND))
     .then((item) => {
       if (item.owner.toString() !== req.user._id) {
-        throw new ForbiddenError(MESSAGE_FORBIDDEN);
+        throw new ForbiddenError(ERROR_MESSAGES.FORBIDDEN_DELETE);
       }
 
       return Item.findByIdAndUpdate(req.params.itemId, req.body, {
@@ -88,7 +88,13 @@ const updateItem = (req, res, next) => {
     .then((updatedItem) => {
       res.send(updatedItem);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err instanceof mongoose.Error.CastError) {
+        next(new BadRequestError(ERROR_MESSAGES.INVALID_ITEM_ID));
+        return;
+      }
+      next(err);
+    });
 };
 
 module.exports = {

@@ -49,10 +49,17 @@ const validateUpdateItem = celebrate({
   }),
 });
 
+const validateUpdateUser = celebrate({
+  [Segments.BODY]: Joi.object().keys({
+    avatarUrl: Joi.string().allow("", null),
+  }),
+});
+
 module.exports = {
   validateSignup,
   validateSignin,
   validateCreateItem,
   validateItemId,
   validateUpdateItem,
+  validateUpdateUser,
 };
