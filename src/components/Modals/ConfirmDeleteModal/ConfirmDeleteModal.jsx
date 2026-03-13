@@ -7,6 +7,7 @@ export default function ConfirmDeleteModal({
   onClose,
   onConfirm,
   itemName,
+  isBusy,
 }) {
   useEffect(() => {
     if (!isOpen) return;
@@ -51,6 +52,7 @@ export default function ConfirmDeleteModal({
             type="button"
             className="btn btn--outline btn--sm confirmModal__btn"
             onClick={onClose}
+            disabled={isBusy}
           >
             Cancel
           </button>
@@ -58,6 +60,7 @@ export default function ConfirmDeleteModal({
             type="button"
             className="btn btn--primary btn--sm confirmModal__btn confirmModal__btn_danger"
             onClick={onConfirm}
+            disabled={isBusy}
           >
             Delete
           </button>

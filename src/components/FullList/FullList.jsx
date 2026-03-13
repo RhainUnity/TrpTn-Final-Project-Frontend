@@ -51,11 +51,13 @@ function FullList({
     }));
   };
 
+  /* ------------HANDLE SAVE--------------------------------------- */
   const handleSave = () => {
     if (!draftItem) return;
 
     setIsSaving(true);
     setEditError("");
+    setDeleteItem(null);
 
     const updateData = buildItemPayload(draftItem, activeStore);
 
@@ -79,6 +81,7 @@ function FullList({
   };
 
   const requestDelete = (row) => {
+    if (isSaving) return;
     setDeleteItem(row);
   };
 
@@ -274,6 +277,7 @@ function FullList({
                         className="full__hide-input"
                         type="checkbox"
                         checked={!!activeRow.hidden}
+                        disabled={isSaving}
                         onChange={(e) => {
                           const nextHidden = e.target.checked;
 
@@ -346,6 +350,7 @@ function FullList({
                           setDraftItem({ ...row });
                           setEditError("");
                         }}
+                        disabled={isSaving}
                       >
                         Edit
                       </button>
@@ -372,6 +377,7 @@ function FullList({
         itemName={deleteItem?.item}
         onClose={closeDeleteModal}
         onConfirm={confirmDelete}
+        isBusy={isSaving}
       />
     </section>
   );
