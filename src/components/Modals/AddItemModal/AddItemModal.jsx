@@ -147,7 +147,7 @@ function AddItemModal({ isOpen, onClose, onSubmit, store }) {
           <select className="addmodal__input" value={store} disabled>
             <option value="WinCo">WinCo</option>
             <option value="Safeway">Safeway</option>
-            <option value="Albertson’s">Albertson’s</option>
+            <option value="Albertson's">Albertson's</option>
           </select>
         </label>
 

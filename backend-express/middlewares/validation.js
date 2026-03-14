@@ -26,7 +26,7 @@ const validateCreateItem = celebrate({
     priority: Joi.string().required().valid("Essential", "Surplus", "Optional"),
     qty: Joi.number().min(0),
     hidden: Joi.boolean(),
-    store: Joi.string().valid("WinCo", "Safeway", "Albertson’s").required(),
+    store: Joi.string().valid("WinCo", "Safeway", "Albertson's").required(),
   }),
 });
 
@@ -45,7 +45,7 @@ const validateUpdateItem = celebrate({
     priority: Joi.string().valid("Essential", "Surplus", "Optional"),
     qty: Joi.number().min(0),
     hidden: Joi.boolean(),
-    store: Joi.string().valid("WinCo", "Safeway", "Albertson’s"),
+    store: Joi.string().valid("WinCo", "Safeway", "Albertson's"),
   }),
 });
 

@@ -18,7 +18,8 @@ const getItems = (req, res, next) => {
 };
 
 const createItem = (req, res, next) => {
-  const { item, price, unit, category, priority, qty, hidden } = req.body;
+  const { item, price, unit, category, priority, qty, hidden, store } =
+    req.body;
 
   Item.create({
     item,
@@ -28,6 +29,7 @@ const createItem = (req, res, next) => {
     priority,
     qty,
     hidden,
+    store,
     owner: req.user._id,
   })
     .then((createdItem) => {

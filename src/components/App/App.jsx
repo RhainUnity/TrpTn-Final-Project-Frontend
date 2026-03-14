@@ -29,7 +29,7 @@ function App() {
   const [itemsError, setItemsError] = useState("");
   const [isItemsLoading, setIsItemsLoading] = useState(false);
 
-  const STORE_TABS = ["WinCo", "Safeway", "Albertson’s"];
+  const STORE_TABS = ["WinCo", "Safeway", "Albertson's"];
   const [activeStore, setActiveStore] = useState("Safeway");
 
   const isLoggedIn = Boolean(currentUser);

@@ -1,37 +1,11 @@
 // src/utils/api.js
 
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 function getToken() {
   return localStorage.getItem("jwt");
 }
 
-/*-------------------FIRST ATTEMPT-------------------*/
-// function checkResponse(res) {
-//   if (!res.ok) {
-//     return res.json().then((err) => Promise.reject(err));
-//   }
-
-//   return res.json();
-// }
-
-// function getToken() {
-//   return localStorage.getItem("jwt");
-// }
-
-/*-------------------UPDATED WITH BETTER ERROR HANDLING-------------------*/
-// function checkResponse(res) {
-//   if (!res.ok) {
-//     return res.json().then((err) => {
-//       console.log("API ERROR:", err);
-//       return Promise.reject(err);
-//     });
-//   }
-
-//   return res.json();
-// }
-
-/*-------------------FINAL VERSION WITH TEXT ERROR HANDLING-------------------*/
 function checkResponse(res) {
   if (res.ok) {
     if (res.status === 204) return null;
