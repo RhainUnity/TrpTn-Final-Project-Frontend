@@ -75,7 +75,7 @@ const updateCurrentUser = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatarUrl: avatarUrl || "" },
-    { new: true, runValidators: true },
+    { returnDocument: "after", runValidators: true },
   )
     .then((user) => {
       if (!user) {

@@ -83,7 +83,7 @@ const updateItem = (req, res, next) => {
       }
 
       return Item.findByIdAndUpdate(req.params.itemId, req.body, {
-        new: true,
+        returnDocument: "after",
         runValidators: true,
       });
     })
