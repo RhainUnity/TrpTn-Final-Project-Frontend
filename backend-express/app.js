@@ -3,7 +3,7 @@
 // Load environment variables
 require("dotenv").config();
 
-// Log the current environment mode for debugging
+// Log the current environment mode for debugging and sanity checks
 console.log(`Starting server in ${process.env.NODE_ENV || "development"} mode`);
 
 // Core dependencies
