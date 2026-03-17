@@ -42,6 +42,7 @@ async function getAveragePrice(req, res, next) {
 
     return res.send(result);
   } catch (err) {
+    console.error("Pricing route error for query:", req.query?.query, err);
     return next(err);
   }
 }
