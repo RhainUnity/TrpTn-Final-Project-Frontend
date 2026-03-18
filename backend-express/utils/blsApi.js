@@ -9,6 +9,8 @@ async function fetchBlsSeries(seriesId) {
     payload.registrationkey = process.env.BLS_API_KEY;
   }
 
+  console.log("Using BLS key:", !!process.env.BLS_API_KEY);
+
   const response = await fetch(
     "https://api.bls.gov/publicAPI/v2/timeseries/data/",
     {
