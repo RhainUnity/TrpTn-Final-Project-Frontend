@@ -1,36 +1,57 @@
-# Shopping App — Stage 1
+# Easy Budget Shopping App
 
 ## Project Description
 
-This project is the first stage of a Shopping App built with React. The application allows users to create and manage a list of shopping items. Stage 1 focuses on building the frontend foundation, including component structure, routing, and basic state management.
+Easy Budget Shopping App is a full-stack web application that helps users plan and manage grocery shopping while staying within budget. Users can create accounts, manage personalized shopping lists, and use real-world pricing data to estimate costs.
+
+The app integrates with the U.S. Bureau of Labor Statistics (BLS) API to provide average prices for common grocery items, giving users a practical reference for budgeting.
 
 ---
 
 ## Live Demo
 
-🔗 https://rhainunity.github.io/TrpTn-Final-Project-Frontend/
+🔗 https://trp-tn-final-project-frontend.vercel.app
 
 ---
 
 ## Features
 
-- Add shopping items
-- Display item list
-- View item details:
+### User Features
+
+- User registration and login (JWT authentication)
+- Persistent user data with MongoDB
+- Personalized shopping lists by store
+- Add, edit, and delete items
+- Assign item details:
   - Name
   - Category
   - Priority
   - Quantity
   - Price
-- Basic navigation with React Router
-- Modal structure for user authentication (UI only)
-- Responsive layout and component styling
+- Store selection (e.g., Safeway, WinCo, Albertsons)
+
+### Pricing Features
+
+- Lookup average grocery prices using the BLS API
+- Auto-fill item price based on search
+- Displays:
+  - Item label
+  - Average price
+  - Unit (e.g., per dozen, per gallon)
+  - Month and year of data
+
+### UI / UX
+
+- Modal-based interactions
+- Responsive design
+- Clean, structured component layout
+- Optimized rendering for smoother performance
 
 ---
 
 ## Tech Stack
 
-**Frontend**
+### Frontend
 
 - React
 - React Router
@@ -38,15 +59,29 @@ This project is the first stage of a Shopping App built with React. The applicat
 - HTML5
 - CSS3
 
-**Build Tools**
+### Backend
+
+- Node.js
+- Express.js
+- MongoDB (Mongoose)
+- JWT Authentication
+
+### APIs
+
+- BLS (Bureau of Labor Statistics) Average Price API
+
+### Deployment
+
+- Frontend: Vercel
+- Backend: Render
+
+### Tools
 
 - Vite
 - ESLint
+- Git & GitHub
 
-**Version Control**
-
-- Git
-- GitHub
+---
 
 ## Installation and Setup
 
@@ -56,67 +91,3 @@ Clone the repository:
 git clone https://github.com/RhainUnity/TrpTn-Final-Project-Frontend.git
 cd TrpTn-Final-Project-Frontend
 ```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Run the development server:
-
-```bash
-npm run dev
-```
-
-Open in browser:
-
-```
-http://localhost:5173
-```
-
----
-
-## Available Scripts
-
-```bash
-npm run dev      # Start development server
-npm run build    # Create production build
-npm run preview  # Preview production build
-npm run lint     # Run ESLint
-```
-
----
-
-## Development Status
-
-**Stage 1 — Frontend Foundation**
-
-Completed:
-
-- Project scaffolding with Vite
-- Component architecture
-- Routing setup
-- Local state management
-- UI layout and styling
-
-Planned for Future Stages:
-
-- Backend API integration
-- User authentication
-- Database storage
-- Edit/Delete items
-- Search and filtering functionality
-
----
-
-## Author
-
-Your Name  
-GitHub: https://github.com/RhainUnity
-
----
-
-## License
-
-This project is for educational purposes as part of a software engineering curriculum.
