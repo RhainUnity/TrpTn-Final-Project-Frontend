@@ -1,0 +1,6 @@
+# .gitignore for backend-express
+
+node_modules
+.env
+logs
+*.log
